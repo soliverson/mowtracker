@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title><%= customerName %> - Jobs</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header>
+    <img src="/logo.png" alt="Hunter Mowing Co. Logo">
+  </header>
+  <nav class="navbar">
+    <ul>
+      <li><a href="/">Dashboard</a></li>
+      <li><a href="/customers">Customers</a></li>
+      <li><a href="/calendar">Calendar</a></li>
+      <li><a href="/payments">Payments</a></li>
+      <li><a href="/logout">Logout</a></li>
+    </ul>
+  </nav>
+  <main>
+    <h2>Jobs for <%= customerName %></h2>
+    <% if (jobs.length === 0) { %>
+      <p>No jobs found for this customer.</p>
+    <% } else { %>
+      <table>
+        <tr>
+          <th>Date</th>
+          <th>Amount Paid</th>
+          <th>Phone</th>
+          <th>Notes</th>
+          <th>Address</th>
+        </tr>
+        <% jobs.forEach(job => { %>
+          <tr>
+            <td><%= job.date %></td>
+            <td>$<%= parseFloat(job.amount_paid).toFixed(2) %></td>
+            <td><%= job.phone || '' %></td>
+            <td><%= job.notes || '' %></td>
+            <td><%= job.address || '' %></td>
+          </tr>
+        <% }) %>
+      </table>
+    <% } %>
+  </main>
+</body>
+</html>

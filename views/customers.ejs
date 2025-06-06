@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Customers</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header>
+    <img src="/logo.png" alt="Hunter Mowing Co. Logo">
+  </header>
+
+  <nav class="navbar">
+    <ul>
+      <li><a href="/">Dashboard</a></li>
+      <li><a href="/customers">Customers</a></li>
+      <li><a href="/calendar">Calendar</a></li>
+      <li><a href="/payments">Payments</a></li>
+      <li><a href="/logout">Logout</a></li>
+    </ul>
+  </nav>
+
+  <main>
+    <h2>Customer List</h2>
+    <div class="customers-container">
+      <% customers.forEach(customer => { %>
+        <div class="customer-card">
+          <h3>
+            <a href="/customers/<%= encodeURIComponent(customer.name) %>">
+              <%= customer.name %>
+            </a>
+          </h3>
+          <p><strong>Phone:</strong> <%= customer.phone || 'N/A' %></p>
+          <p><strong>Address:</strong> <%= customer.address || 'N/A' %></p>
+        </div>
+      <% }) %>
+    </div>
+  </main>
+</body>
+</html>

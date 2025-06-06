@@ -93,8 +93,97 @@ justify-content: center;
 
 
 
-------
+.navbar {
+  width: 100%;
+  background-color: #0d3824;
+  padding: 10px 0;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
 
+.navbar ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.navbar li {
+  margin: 0 15px;
+}
+
+.navbar a {
+  text-decoration: none;
+  color: #f3e5ab;
+  font-weight: bold;
+}
+
+.navbar a:hover {
+  text-decoration: underline;
+}
+
+h2 {
+      text-align: center;
+      color: #1a4d2e;
+      margin-bottom: 30px;
+    }
+
+    .customers-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+    }
+
+    .customer-card {
+      background: white;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      padding: 20px;
+      width: 260px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .customer-card h3 {
+      margin-top: 0;
+      color: #1a4d2e;
+    }
+
+    .customer-card p {
+      margin: 8px 0;
+    }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  background-color: #f3f8f5; /* light neutral background */
+}
+
+th, td {
+  border: 1px solid #d1e0d0;
+  padding: 10px;
+  text-align: left;
+  font-size: 16px;
+  color: #1d3c2d; /* dark green text */
+}
+
+th {
+  background-color: #2e4d3d; /* darker green header */
+  color: #f3e5ab; /* soft gold text */
+}
+
+tr:nth-child(even) {
+  background-color: #e4efe7; /* lighter green shade */
+}
+
+tr:nth-child(odd) {
+  background-color: #ffffff; /* white for contrast */
+}
+
+tr:hover {
+  background-color: #cfe3d7; /* subtle highlight on hover */
+}
 
 main {
   padding: 20px;

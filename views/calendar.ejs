@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Calendar</title>
+  <link rel="stylesheet" href="/styles.css">
+  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.css" rel="stylesheet" />
+  <style>
+    #calendar {
+      max-width: 900px;
+      margin: 40px auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="/logo.png" alt="Hunter Mowing Co. Logo">
+  </header>
+
+  <nav class="navbar">
+    <ul>
+      <li><a href="/">Dashboard</a></li>
+      <li><a href="/customers">Customers</a></li>
+      <li><a href="/calendar" class="active">Calendar</a></li>
+      <li><a href="/payments">Payments</a></li>
+      <li><a href="/logout">Logout</a></li>
+    </ul>
+  </nav>
+
+  <main>
+    <h2>Scheduled Appointments</h2>
+
+    <div class="form-box">
+      <h3>Schedule a New Appointment</h3>
+      <form method="POST" action="/add-appointment">
+        <input name="customer_name" placeholder="Customer Name" required>
+        <input name="phone" placeholder="Phone Number">
+        <input name="date" type="date" required>
+        <input name="time" type="time" required>
+        <textarea name="notes" placeholder="Notes (optional)"></textarea>
+        <input name="address" placeholder="Address (optional)">
+        <button type="submit">Schedule Appointment</button>
+      </form>
+    </div>
+
+    <div id="calendar"></div>
+  </main>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const calendarEl = document.getElementById('calendar');
+    const calendar = new FullCalendar.Calendar(calendarEl, {
+      initialView: 'dayGridMonth',
+      headerToolbar: {
+        left: 'prev,next today',
+        center: 'title',
+        right: 'dayGridMonth,timeGridWeek,timeGridDay'
+      },
+      events: <%- JSON.stringify(jobs.map(job => ({
+        title: job.customer_name,
+        start: job.time ? `${job.date}T${job.time}` : `${job.date}T09:00:00`,
+        allDay: false
+      }))) %>
+    });
+    calendar.render();
+  });
+</script>
+
+<h3>All Appointments</h3>
+<table>
+  <tr><th>Customer</th><th>Date</th><th>Time</th><th>Notes</th><th>Actions</th></tr>
+  <% jobs.forEach(job => { %>
+    <tr>
+      <td><%= job.customer_name %></td>
+      <td><%= job.date %></td>
+      <td><%= job.time ? job.time.slice(0, 5) : 'N/A' %></td>
+      <td><%= job.notes || '' %></td>
+      <td>
+        <form method="POST" action="/jobs/<%= job.id %>/delete" onsubmit="return confirm('Delete this appointment?');">
+          <button type="submit">Delete</button>
+        </form>
+        <!-- Add Edit button here if needed -->
+      </td>
+    </tr>
+  <% }) %>
+</table>
+
+</body>
+</html>

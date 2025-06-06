@@ -3,58 +3,107 @@
 <head>
   <title>Dashboard</title>
   <link rel="stylesheet" href="/styles.css">
-  <link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.css' rel='stylesheet' />
+  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.css" rel="stylesheet" />
 </head>
 <body>
   <header>
     <img src="/logo.png" alt="Hunter Mowing Co. Logo">
   </header>
+
+  <nav class="navbar">
+    <ul>
+      <li><a href="/">Dashboard</a></li>
+      <li><a href="/customers">Customers</a></li>
+      <li><a href="/calendar">Calendar</a></li>
+      <li><a href="/payments">Payments</a></li>
+      <li><a href="/logout">Logout</a></li>
+    </ul>
+  </nav>
+
   <main>
     <h2>Welcome, <%= user.name %>!</h2>
     <p>Total Income: $<%= total.toFixed(2) %></p>
-    <form method="POST" action="/add-job">
-      <h3>Add Mowing Job</h3>
-      <input name="customer_name" placeholder="Customer Name" required>
-      <input name="phone" placeholder="Phone Number">
-      <textarea name="notes" placeholder="Notes (optional)"></textarea>
-      <input name="date" type="date" required>
-      <input name="amount_paid" placeholder="Amount Paid" type="number" step="0.01" required>
-      <button type="submit">Add Job</button>
-    </form>
 
-    <h3>Job History</h3>
-    <table>
-      <tr><th>Customer</th><th>Phone</th><th>Date</th><th>Amount</th><th>Notes</th></tr>
-      <% jobs.forEach(job => { %>
-        <tr>
-          <td><%= job.customer_name %></td>
-          <td><%= job.phone || '' %></td>
-          <td><%= job.date %></td>
-          <td>$<%= job.amount_paid.toFixed(2) %></td>
-          <td><%= job.notes || '' %></td>
-        </tr>
-      <% }) %>
-    </table>
+    <div class="forms-container">
+      <div class="form-box">
+        <h3>Add Mowing Job</h3>
+        <form method="POST" action="/add-job">
+          <input name="customer_name" placeholder="Customer Name" required>
+          <input name="phone" placeholder="Phone Number">
+          <textarea name="notes" placeholder="Notes (optional)"></textarea>
+          <input name="date" type="date" required>
+          <input name="amount_paid" placeholder="Amount Paid" type="number" step="0.01" required>
+          <input name="address" placeholder="Address (optional)">
+          <button type="submit">Add Job</button>
+        </form>
+      </div>
+
+      <div class="form-box">
+        <h3>Add New Customer</h3>
+        <form method="POST" action="/add-customer">
+          <input name="name" placeholder="Customer Name" required>
+          <input name="phone" placeholder="Phone Number">
+          <input name="address" placeholder="Address">
+          <button type="submit">Add Customer</button>
+        </form>
+      </div>
+    </div>
+
+   <h3>Job History</h3>
+<table>
+  <tr><th>Customer</th><th>Phone</th><th>Date</th><th>Amount</th><th>Notes</th><th>Actions</th></tr>
+  <% jobs.forEach(job => { %>
+    <tr>
+      <td><%= job.customer_name %></td>
+      <td><%= job.phone || '' %></td>
+      <td><%= job.date %></td>
+      <td>$<%= Number(job.amount_paid || 0).toFixed(2) %></td>
+      <td><%= job.notes || '' %></td>
+      <td>
+        <form action="/jobs/<%= job.id %>/delete" method="POST" onsubmit="return confirm('Are you sure you want to delete this job?');">
+          <button type="submit">Delete</button>
+        </form>
+      </td>
+    </tr>
+  <% }) %>
+</table>
 
     <h3>Job Calendar</h3>
-    <div id='calendar'></div>
 
-    <br>
-    <a href="/logout">Logout</a>
+<% if (upcomingJobs.length === 0) { %>
+  <p>No upcoming jobs scheduled.</p>
+<% } else { %>
+  <div id="calendar"></div>
+<% } %>
+
   </main>
-  <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.js'></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      var calendarEl = document.getElementById('calendar');
-      var calendar = new FullCalendar.Calendar(calendarEl, {
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const calendarEl = document.getElementById('calendar');
+    if (!calendarEl) return;
+
+    const upcomingJobs = <%- JSON.stringify(upcomingJobs.map(job => ({
+      title: job.customer_name,
+      start: job.time ? `${job.date}T${job.time}` : job.date,
+      allDay: false
+    }))) %>;
+
+    if (upcomingJobs.length > 0) {
+      const calendar = new FullCalendar.Calendar(calendarEl, {
         initialView: 'dayGridMonth',
-        events: <%- JSON.stringify(jobs.map(job => ({
-          title: job.customer_name,
-          start: job.date
-        }))) %>
+        headerToolbar: {
+          left: 'prev,next today',
+          center: 'title',
+          right: 'dayGridMonth,timeGridWeek'
+        },
+        events: upcomingJobs
       });
       calendar.render();
-    });
-  </script>
+    }
+  });
+</script>
+
+
 </body>
 </html>

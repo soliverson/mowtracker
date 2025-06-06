@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Payments</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header>
+    <img src="/logo.png" alt="Hunter Mowing Co. Logo">
+  </header>
+
+  <nav class="navbar">
+    <ul>
+      <li><a href="/">Dashboard</a></li>
+      <li><a href="/customers">Customers</a></li>
+      <li><a href="/calendar">Calendar</a></li>
+      <li><a href="/payments" class="active">Payments</a></li>
+      <li><a href="/logout">Logout</a></li>
+    </ul>
+  </nav>
+
+  <main>
+    <h2>Payment History for <%= user.name %></h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Customer</th>
+          <th>Date</th>
+          <th>Amount Paid</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% let total = 0; %>
+        <% jobs.forEach(job => { 
+             const amount = Number(job.amount_paid || 0);
+             total += amount;
+        %>
+          <tr>
+            <td><%= job.customer_name %></td>
+            <td><%= job.date %></td>
+            <td>$<%= amount.toFixed(2) %></td>
+          </tr>
+        <% }) %>
+        <tr style="font-weight: bold; border-top: 2px solid #000;">
+          <td colspan="2">Total</td>
+          <td>$<%= total.toFixed(2) %></td>
+        </tr>
+      </tbody>
+    </table>
+  </main>
+</body>
+</html>
