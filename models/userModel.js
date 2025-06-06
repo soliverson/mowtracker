@@ -118,6 +118,39 @@ function deleteCustomer(userId, customerId, callback) {
     callback
   );
 }
+// Get a job by ID
+function getJobById(userId, jobId, callback) {
+  db.query(
+    'SELECT * FROM jobs WHERE id = $1 AND user_id = $2',
+    [jobId, userId],
+    (err, result) => {
+      if (err) return callback(err);
+      callback(null, result.rows[0]);
+    }
+  );
+}
+// Get a job by ID
+function getJobById(userId, jobId, callback) {
+  db.query(
+    'SELECT * FROM jobs WHERE id = $1 AND user_id = $2',
+    [jobId, userId],
+    (err, result) => {
+      if (err) return callback(err);
+      callback(null, result.rows[0]);
+    }
+  );
+}
+
+// Update job
+function updateJob(userId, jobId, customer_name, date, amount_paid, phone, notes, address, time, callback) {
+  db.query(
+    `UPDATE jobs SET customer_name = $1, date = $2, amount_paid = $3,
+     phone = $4, notes = $5, address = $6, time = $7
+     WHERE id = $8 AND user_id = $9`,
+    [customer_name, date, amount_paid, phone, notes, address, time, jobId, userId],
+    callback
+  );
+}
 
 module.exports = {
   register,
@@ -130,5 +163,7 @@ module.exports = {
   getCustomers,
   getCustomerById,
   updateCustomer,
-  deleteCustomer
+  deleteCustomer,
+   getJobById, 
+  updateJob
 };
