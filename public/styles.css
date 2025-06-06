@@ -138,7 +138,7 @@ h2 {
 
     .customer-card {
       background: white;
-      border: 1px solid #ccc;
+      border: 1px solid #0d3824;
       border-radius: 10px;
       padding: 20px;
       width: 260px;
@@ -212,7 +212,7 @@ th, td {
   text-align: left;
 }
 a {
-  color: #f3e5ab;
+  color: #0d3824;
 }
 
 textarea {

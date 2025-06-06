@@ -89,20 +89,32 @@ function getCustomers(userId, callback) {
   );
 }
 
-// Delete a customer
-function deleteCustomer(userId, customerName, callback) {
+// Get one customer by ID
+function getCustomerById(userId, customerId, callback) {
   db.query(
-    'DELETE FROM customers WHERE user_id = $1 AND name = $2',
-    [userId, customerName],
-    callback
+    'SELECT * FROM customers WHERE id = $1 AND user_id = $2',
+    [customerId, userId],
+    (err, result) => {
+      if (err) return callback(err);
+      callback(null, result.rows[0]);
+    }
   );
 }
 
 // Update a customer
-function updateCustomer(userId, oldName, newName, phone, address, callback) {
+function updateCustomer(userId, customerId, name, phone, address, callback) {
   db.query(
-    'UPDATE customers SET name = $1, phone = $2, address = $3 WHERE user_id = $4 AND name = $5',
-    [newName, phone, address, userId, oldName],
+    'UPDATE customers SET name = $1, phone = $2, address = $3 WHERE id = $4 AND user_id = $5',
+    [name, phone, address, customerId, userId],
+    callback
+  );
+}
+
+// Delete a customer
+function deleteCustomer(userId, customerId, callback) {
+  db.query(
+    'DELETE FROM customers WHERE id = $1 AND user_id = $2',
+    [customerId, userId],
     callback
   );
 }
@@ -116,6 +128,7 @@ module.exports = {
   deleteJob,
   addCustomer,
   getCustomers,
-  deleteCustomer,
-  updateCustomer
+  getCustomerById,
+  updateCustomer,
+  deleteCustomer
 };

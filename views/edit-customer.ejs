@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Edit Customer</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header>
+    <img src="/logo.png" alt="Hunter Mowing Co. Logo">
+  </header>
+
+  <nav class="navbar">
+    <ul>
+      <li><a href="/">Dashboard</a></li>
+      <li><a href="/customers">Customers</a></li>
+      <li><a href="/calendar">Calendar</a></li>
+      <li><a href="/payments">Payments</a></li>
+      <li><a href="/logout">Logout</a></li>
+    </ul>
+  </nav>
+
+  <main>
+    <h2>Edit Customer</h2>
+    <form action="/customers/<%= customer.id %>/update" method="POST">
+      <label>Name:</label>
+      <input type="text" name="name" value="<%= customer.name %>" required><br>
+      <label>Phone:</label>
+      <input type="text" name="phone" value="<%= customer.phone %>" required><br>
+      <label>Address:</label>
+      <input type="text" name="address" value="<%= customer.address %>" required><br>
+      <button type="submit">Update</button>
+    </form>
+  </main>
+</body>
+</html>

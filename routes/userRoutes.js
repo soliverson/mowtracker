@@ -2,32 +2,58 @@ const express = require('express');
 const router = express.Router();
 const userModel = require('../models/userModel');
 
-// Dashboard (main route)
+// Dashboard
 router.get('/', (req, res) => {
   if (!req.session.user) return res.redirect('/login');
 
   userModel.getJobs(req.session.user.id, (err, jobs) => {
     if (err) return res.send('Error loading jobs');
 
-    const now = new Date();
+    userModel.getCustomers(req.session.user.id, (err2, customers) => {
+      if (err2) return res.send('Error loading customers');
 
-    const total = jobs.reduce((sum, job) => sum + parseFloat(job.amount_paid || 0), 0);
+      const now = new Date();
+      const total = jobs.reduce((sum, job) => sum + parseFloat(job.amount_paid || 0), 0);
 
-    const upcomingJobs = jobs
-      .filter(job => new Date(`${job.date}T${job.time || '00:00'}`) >= now)
-      .sort((a, b) => new Date(`${a.date}T${a.time || '00:00'}`) - new Date(`${b.date}T${b.time || '00:00'}`));
+      const upcomingJobs = jobs
+        .filter(job => new Date(`${job.date}T${job.time || '00:00'}`) >= now)
+        .sort((a, b) => new Date(`${a.date}T${a.time || '00:00'}`) - new Date(`${b.date}T${b.time || '00:00'}`));
 
-    res.render('dashboard', {
-      user: req.session.user,
-      jobs,
-      total,
-      upcomingJobs
+      res.render('dashboard', {
+        user: req.session.user,
+        jobs,
+        total,
+        upcomingJobs,
+        customers
+      });
     });
   });
 });
 
+// Add Job from Dashboard
+router.post('/add-job', (req, res) => {
+  if (!req.session.user) return res.redirect('/login');
 
+  const { customer_name, phone, notes, date, amount_paid, address } = req.body;
 
+  userModel.addJob(
+    req.session.user.id,
+    customer_name,
+    date,
+    amount_paid,
+    phone,
+    notes,
+    address,
+    null,
+    (err) => {
+      if (err) {
+        console.error('Error adding job from dashboard:', err);
+        return res.send('Error saving job');
+      }
+      res.redirect('/');
+    }
+  );
+});
 
 // Login
 router.get('/login', (req, res) => {
@@ -62,6 +88,7 @@ router.post('/register', (req, res) => {
     res.redirect('/login');
   });
 });
+
 // Add Customer
 router.post('/add-customer', (req, res) => {
   if (!req.session.user) return res.redirect('/login');
@@ -76,32 +103,30 @@ router.post('/add-customer', (req, res) => {
     res.redirect('/');
   });
 });
-// Add Job
+
+// Add Appointment (Job)
 router.post('/add-appointment', (req, res) => {
   if (!req.session.user) return res.redirect('/login');
 
-  const { customer_name, date, time, phone, notes, address } = req.body;
+  const { customer_name, date, time, phone, notes, address, amount_paid } = req.body;
 
   userModel.addJob(
     req.session.user.id,
     customer_name,
     date,
-    0, // No payment shown/saved
+    amount_paid || 0,
     phone,
     notes,
     address,
     time,
     (err) => {
-      if (err) return res.send('Error saving appointment');
+      if (err) {
+        console.error('Error adding appointment:', err);
+        return res.send('Error saving appointment');
+      }
       res.redirect('/calendar');
     }
   );
-});
-
-
-// Logout
-router.get('/logout', (req, res) => {
-  req.session.destroy(() => res.redirect('/login'));
 });
 
 // Customers page
@@ -116,6 +141,7 @@ router.get('/customers', (req, res) => {
     res.render('customers', { user: req.session.user, customers });
   });
 });
+
 router.get('/customers/:name', (req, res) => {
   if (!req.session.user) return res.redirect('/login');
   const customerName = decodeURIComponent(req.params.name);
@@ -125,6 +151,7 @@ router.get('/customers/:name', (req, res) => {
     res.render('customer-jobs', { customerName, jobs });
   });
 });
+
 // View all jobs for a customer
 router.get('/customer/:name', (req, res) => {
   if (!req.session.user) return res.redirect('/login');
@@ -141,19 +168,17 @@ router.get('/calendar', (req, res) => {
 
   userModel.getJobs(req.session.user.id, (err, jobs) => {
     if (err) return res.send('Error loading jobs');
-   const now = new Date();
- 
-const upcomingJobs = jobs
-  .filter(job => {
-    const jobDateTime = new Date(`${job.date}T${job.time || '00:00'}`);
-    return jobDateTime.getTime() >= now.getTime();
-  })
-  .sort((a, b) => {
-    const aTime = new Date(`${a.date}T${a.time || '00:00'}`).getTime();
-    const bTime = new Date(`${b.date}T${b.time || '00:00'}`).getTime();
-    return aTime - bTime;
-  });
 
+    const now = new Date();
+    const upcomingJobs = jobs
+      .filter(job => new Date(`${job.date}T${job.time || '00:00'}`) >= now)
+      .sort((a, b) => new Date(`${a.date}T${a.time || '00:00'}`) - new Date(`${b.date}T${b.time || '00:00'}`));
+
+    res.render('calendar', {
+      user: req.session.user,
+      upcomingJobs,
+      jobs // <-- Fix: calendar.ejs needs jobs
+    });
   });
 });
 
@@ -163,10 +188,11 @@ router.get('/payments', (req, res) => {
 
   userModel.getJobs(req.session.user.id, (err, jobs) => {
     if (err) return res.send('Error loading jobs');
-    const total = jobs.reduce((sum, job) => sum + parseFloat(job.amount_paid), 0);
+    const total = jobs.reduce((sum, job) => sum + parseFloat(job.amount_paid || 0), 0);
     res.render('payments', { user: req.session.user, jobs, total });
   });
 });
+
 // Delete job by ID
 router.post('/jobs/:id/delete', (req, res) => {
   if (!req.session.user) return res.redirect('/login');
@@ -178,7 +204,48 @@ router.post('/jobs/:id/delete', (req, res) => {
       console.error('Failed to delete job:', err);
       return res.send('Error deleting job');
     }
-    res.redirect('back'); // refresh the current page
+    res.redirect('back');
+  });
+});
+
+// Edit customer form
+router.get('/customers/:id/edit', (req, res) => {
+  if (!req.session.user) return res.redirect('/login');
+
+  userModel.getCustomerById(req.session.user.id, req.params.id, (err, customer) => {
+    if (err || !customer) return res.send('Error loading customer');
+    res.render('edit-customer', { customer });
+  });
+});
+
+// Handle customer update
+router.post('/customers/:id/update', (req, res) => {
+  if (!req.session.user) return res.redirect('/login');
+
+  const { name, phone, address } = req.body;
+  userModel.updateCustomer(req.session.user.id, req.params.id, name, phone, address, (err) => {
+    if (err) return res.send('Error updating customer');
+    res.redirect('/customers');
+  });
+});
+
+// Delete customer
+router.post('/customers/:id/delete', (req, res) => {
+  if (!req.session.user) return res.redirect('/login');
+
+  userModel.deleteCustomer(req.session.user.id, req.params.id, (err) => {
+    if (err) return res.send('Error deleting customer');
+    res.redirect('/customers');
+  });
+});
+
+// Show appointment form with customer list
+router.get('/add-appointment', (req, res) => {
+  if (!req.session.user) return res.redirect('/login');
+
+  userModel.getCustomers(req.session.user.id, (err, customers) => {
+    if (err) return res.send('Error loading customers');
+    res.render('add-appointment', { user: req.session.user, customers });
   });
 });
 

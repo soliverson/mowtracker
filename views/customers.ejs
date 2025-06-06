@@ -22,18 +22,23 @@
   <main>
     <h2>Customer List</h2>
     <div class="customers-container">
-      <% customers.forEach(customer => { %>
-        <div class="customer-card">
-          <h3>
-            <a href="/customers/<%= encodeURIComponent(customer.name) %>">
-              <%= customer.name %>
-            </a>
-          </h3>
-          <p><strong>Phone:</strong> <%= customer.phone || 'N/A' %></p>
-          <p><strong>Address:</strong> <%= customer.address || 'N/A' %></p>
-        </div>
-      <% }) %>
+  <% customers.forEach(customer => { %>
+    <div class="customer-card">
+      <h3>
+        <a href="/customers/<%= encodeURIComponent(customer.name) %>">
+          <%= customer.name %>
+        </a>
+      </h3>
+      <p><strong>Phone:</strong> <%= customer.phone || 'N/A' %></p>
+      <p><strong>Address:</strong> <%= customer.address || 'N/A' %></p>
+      <a href="/customers/<%= customer.id %>/edit">Edit</a>
+      <form action="/customers/<%= customer.id %>/delete" method="POST" style="display:inline;">
+        <button type="submit" onclick="return confirm('Delete this customer?')">Delete</button>
+      </form>
     </div>
+  <% }) %>
+</div>
+
   </main>
 </body>
 </html>
