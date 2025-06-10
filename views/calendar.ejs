@@ -20,30 +20,38 @@
     <img src="/logo.png" alt="Hunter Mowing Co. Logo">
   </header>
 
-  <nav class="navbar">
+  <nav class="navbar" id="navbar">
     <ul>
-      <li><a href="/">Dashboard</a></li>
+      <li><a href="/">Home</a></li>
       <li><a href="/customers">Customers</a></li>
-      <li><a href="/calendar" class="active">Calendar</a></li>
+      <li><a href="/calendar">Calendar</a></li>
       <li><a href="/payments">Payments</a></li>
+      <li><a href="/reports">Reports</a></li>
       <li><a href="/logout">Logout</a></li>
     </ul>
   </nav>
-
+  
   <main>
     <h2>Scheduled Appointments</h2>
 
     <div class="form-box">
-      <h3>Schedule a New Appointment</h3>
-      <form method="POST" action="/add-appointment">
-        <input name="customer_name" placeholder="Customer Name" required>
-        <input name="phone" placeholder="Phone Number">
-        <input name="date" type="date" required>
-        <input name="time" type="time" required>
-        <textarea name="notes" placeholder="Notes (optional)"></textarea>
-        <input name="address" placeholder="Address (optional)">
-        <button type="submit">Schedule Appointment</button>
-      </form>
+<h3>Schedule a New Appointment</h3>
+<form method="POST" action="/add-appointment">
+  <label for="customer_name">Customer:</label>
+  <select name="customer_name" required>
+    <% customers.forEach(c => { %>
+      <option value="<%= c.name %>"><%= c.name %></option>
+    <% }) %>
+  </select>
+  <input name="phone" placeholder="Phone Number">
+  <input name="date" type="date" required>
+  <input name="time" type="time" required>
+  <textarea name="notes" placeholder="Notes (optional)"></textarea>
+  <input name="address" placeholder="Address (optional)">
+  <input name="amount_paid" placeholder="Amount Paid (optional)" step="0.01">
+  <button type="submit">Schedule Appointment</button>
+</form>
+
     </div>
 
     <div id="calendar"></div>

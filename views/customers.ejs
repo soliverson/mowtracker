@@ -9,12 +9,13 @@
     <img src="/logo.png" alt="Hunter Mowing Co. Logo">
   </header>
 
-  <nav class="navbar">
+ <nav class="navbar" id="navbar">
     <ul>
-      <li><a href="/">Dashboard</a></li>
+      <li><a href="/">Home</a></li>
       <li><a href="/customers">Customers</a></li>
       <li><a href="/calendar">Calendar</a></li>
       <li><a href="/payments">Payments</a></li>
+      <li><a href="/reports">Reports</a></li>
       <li><a href="/logout">Logout</a></li>
     </ul>
   </nav>
@@ -35,6 +36,10 @@
       <form action="/customers/<%= customer.id %>/delete" method="POST" style="display:inline;">
         <button type="submit" onclick="return confirm('Delete this customer?')">Delete</button>
       </form>
+      <a href="/add-appointment?customer=<%= encodeURIComponent(customer.name) %>">
+  <button>Schedule Appointment</button>
+</a>
+
     </div>
   <% }) %>
 </div>

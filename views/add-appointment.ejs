@@ -9,25 +9,29 @@
     <img src="/logo.png" alt="Hunter Mowing Co. Logo">
   </header>
 
-  <nav class="navbar">
+ <nav class="navbar" id="navbar">
     <ul>
-      <li><a href="/">Dashboard</a></li>
+      <li><a href="/">Home</a></li>
       <li><a href="/customers">Customers</a></li>
       <li><a href="/calendar">Calendar</a></li>
       <li><a href="/payments">Payments</a></li>
+      <li><a href="/reports">Reports</a></li>
       <li><a href="/logout">Logout</a></li>
     </ul>
   </nav>
-
+  
   <main>
     <h2>Schedule Appointment</h2>
     <form action="/add-appointment" method="POST">
       <label for="customer_name">Customer:</label>
       <select name="customer_name" required>
-        <% customers.forEach(c => { %>
-          <option value="<%= c.name %>"><%= c.name %></option>
-        <% }) %>
-      </select><br>
+  <% customers.forEach(c => { %>
+    <option value="<%= c.name %>" <%= (c.name === selectedCustomer ? 'selected' : '') %>>
+      <%= c.name %>
+    </option>
+  <% }) %>
+</select>
+
 
       <label for="date">Date:</label>
       <input type="date" name="date" required><br>
@@ -50,5 +54,13 @@
       <button type="submit">Add Appointment</button>
     </form>
   </main>
+  <div class="mobile-nav">
+  <a href="/">🏠</a>
+  <a href="/calendar">📅</a>
+  <a href="/add-appointment">➕</a>
+  <a href="/payments">💵</a>
+  <a href="/logout">🚪</a>
+</div>
+
 </body>
 </html>
