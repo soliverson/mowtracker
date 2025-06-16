@@ -3,13 +3,25 @@
 <head>
   <meta charset="UTF-8">
   <title><%- typeof title !== 'undefined' ? title : 'Hunter Mowing Co.' %></title>
+
+  <!-- Favicon & PWA Icons -->
   <link rel="icon" href="/favicon.ico" type="image/x-icon">
+  <link rel="apple-touch-icon" href="/logo.png" sizes="192x192">
+  <link rel="manifest" href="/manifest.json">
+
+  <!-- Meta for iOS & Android -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="MowTracker">
+  <meta name="theme-color" content="#228B22">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Styles -->
   <link rel="stylesheet" href="/styles.css">
   <% if (typeof includeCalendarCSS !== 'undefined' && includeCalendarCSS) { %>
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.css" rel="stylesheet">
   <% } %>
 </head>
+
 <body>
   <% if (typeof showHeader === 'undefined' || showHeader !== false) { %>
     <%- include('partials/header') %>
@@ -24,5 +36,22 @@
   </main>
 
   <%- include('partials/footer') %>
+
+  <!-- PWA Service Worker -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js').then(function () {
+        console.log('✅ Service Worker Registered');
+      });
+    }
+  </script>
+
+  <!-- Mobile Nav Toggle -->
+  <script>
+    function toggleMenu() {
+      const navbar = document.getElementById('navbar');
+      navbar.classList.toggle('active');
+    }
+  </script>
 </body>
 </html>
