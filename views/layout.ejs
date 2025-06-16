@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title><%- typeof title !== 'undefined' ? title : 'Hunter Mowing Co.' %></title>
+  <link rel="icon" href="/favicon.ico" type="image/x-icon">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/styles.css">
+  <% if (typeof includeCalendarCSS !== 'undefined' && includeCalendarCSS) { %>
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.css" rel="stylesheet">
+  <% } %>
+</head>
+<body>
+  <% if (typeof showHeader === 'undefined' || showHeader !== false) { %>
+    <%- include('partials/header') %>
+  <% } %>
+
+  <% if (typeof showNav === 'undefined' || showNav !== false) { %>
+    <%- include('partials/nav') %>
+  <% } %>
+
+  <main>
+    <%- body %>
+  </main>
+
+  <%- include('partials/footer') %>
+</body>
+</html>

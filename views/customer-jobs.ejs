@@ -1,24 +1,4 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title><%= customerName %> - Jobs</title>
-  <link rel="stylesheet" href="/styles.css">
-</head>
-<body>
-  <header>
-    <img src="/logo.png" alt="Hunter Mowing Co. Logo">
-  </header>
-  <nav class="navbar" id="navbar">
-    <ul>
-      <li><a href="/">Home</a></li>
-      <li><a href="/customers">Customers</a></li>
-      <li><a href="/calendar">Calendar</a></li>
-      <li><a href="/payments">Payments</a></li>
-      <li><a href="/reports">Reports</a></li>
-      <li><a href="/logout">Logout</a></li>
-    </ul>
-  </nav>
-  <main>
+
     <h2>Jobs for <%= customerName %></h2>
     <% if (jobs.length === 0) { %>
       <p>No jobs found for this customer.</p>
@@ -42,6 +22,4 @@
         <% }) %>
       </table>
     <% } %>
-  </main>
-</body>
-</html>
+      

@@ -1,0 +1,29 @@
+
+<h2>Payment History for <%= user.name %></h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Customer</th>
+      <th>Date</th>
+      <th>Amount Paid</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% let total = 0; %>
+    <% jobs.forEach(job => { 
+         const amount = Number(job.amount_paid || 0);
+         total += amount;
+    %>
+      <tr>
+        <td><%= job.customer_name %></td>
+        <td><%= job.date %></td>
+        <td>$<%= amount.toFixed(2) %></td>
+      </tr>
+    <% }) %>
+    <tr style="font-weight: bold; border-top: 2px solid #000;">
+      <td colspan="2">Total</td>
+      <td>$<%= total.toFixed(2) %></td>
+    </tr>
+  </tbody>
+</table>

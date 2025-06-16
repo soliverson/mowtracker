@@ -1,53 +1,56 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Edit Job</title>
-  <link rel="stylesheet" href="/styles.css">
-</head>
-<body>
-  <header>
-    <img src="/logo.png" alt="Hunter Mowing Co. Logo">
-  </header>
-<nav class="navbar" id="navbar">
-    <ul>
-      <li><a href="/">Home</a></li>
-      <li><a href="/customers">Customers</a></li>
-      <li><a href="/calendar">Calendar</a></li>
-      <li><a href="/payments">Payments</a></li>
-      <li><a href="/reports">Reports</a></li>
-      <li><a href="/logout">Logout</a></li>
-    </ul>
-  </nav>
-  <main>
-    <h2>Edit Job</h2>
-    <form method="POST" action="/jobs/<%= job.id %>/update">
-      <label>Customer:</label>
-      <select name="customer_name" required>
-        <% customers.forEach(c => { %>
-          <option value="<%= c.name %>" <%= job.customer_name === c.name ? 'selected' : '' %>><%= c.name %></option>
-        <% }) %>
-      </select><br>
+<h2>Edit Appointment</h2>
+<form action="/calendar/jobs/<%= job.id %>/update" method="POST">
+  <label for="customer_name">Customer:</label>
+  <select name="customer_name" required>
+    <% customers.forEach(c => { %>
+      <option value="<%= c.name %>" <%= c.name === job.customer_name ? 'selected' : '' %>>
+        <%= c.name %>
+      </option>
+    <% }) %>
+  </select><br>
 
-      <label>Date:</label>
-      <input type="date" name="date" value="<%= job.date %>" required><br>
+  <label for="date">Date:</label>
+  <input type="date" name="date" value="<%= job.date.toISOString().split('T')[0] %>" required><br>
 
-      <label>Time:</label>
-      <input type="time" name="time" value="<%= job.time %>"><br>
+  <label for="time">Time:</label>
+  <input type="time" name="time" value="<%= job.time || '' %>"><br>
 
-      <label>Amount Paid:</label>
-      <input type="number" step="0.01" name="amount_paid" value="<%= job.amount_paid %>"><br>
+  <label for="amount_paid">Amount Paid ($):</label>
+  <input type="number" name="amount_paid" step="0.01" value="<%= job.amount_paid || '' %>"><br>
 
-      <label>Phone:</label>
-      <input type="text" name="phone" value="<%= job.phone || '' %>"><br>
+  <label for="phone">Phone:</label>
+  <input type="text" name="phone" value="<%= job.phone || '' %>"><br>
 
-      <label>Address:</label>
-      <input type="text" name="address" value="<%= job.address || '' %>"><br>
+  <label for="address">Address:</label>
+  <input type="text" name="address" value="<%= job.address || '' %>"><br>
 
-      <label>Notes:</label><br>
-      <textarea name="notes" rows="4" cols="40"><%= job.notes || '' %></textarea><br>
+  <label for="notes">Notes:</label><br>
+  <textarea name="notes" rows="4" cols="40"><%= job.notes || '' %></textarea><br>
 
-      <button type="submit">Save Changes</button>
-    </form>
-  </main>
-</body>
-</html>
+  <label>
+    <input type="checkbox" id="is_recurring" name="is_recurring" value="true">
+    Repeat weekly (creates future jobs)
+  </label><br>
+
+  <div id="repeatOptions" style="display:none;">
+    <label for="recurring_weeks">Repeat for how many weeks?</label>
+    <input type="number" name="recurring_weeks" id="recurring_weeks" min="1" max="52" value="1"><br>
+  </div>
+
+  <button type="submit">Update Appointment</button>
+</form>
+
+<script>
+  const recurringCheckbox = document.getElementById('is_recurring');
+  const repeatOptions = document.getElementById('repeatOptions');
+
+  recurringCheckbox.addEventListener('change', () => {
+    repeatOptions.style.display = recurringCheckbox.checked ? 'block' : 'none';
+  });
+
+  window.onload = () => {
+    if (recurringCheckbox.checked) {
+      repeatOptions.style.display = 'block';
+    }
+  };
+</script>

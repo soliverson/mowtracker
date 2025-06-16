@@ -1,0 +1,23 @@
+
+<h2>Activity Log for <%= user.name %></h2>
+
+<% if (activities.length === 0) { %>
+  <p>No recent activity found.</p>
+<% } else { %>
+  <table>
+    <thead>
+      <tr>
+        <th>Action</th>
+        <th>Timestamp</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% activities.forEach(activity => { %>
+        <tr>
+          <td><%= activity.action %></td>
+          <td><%= new Date(activity.timestamp).toLocaleString() %></td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+<% } %>

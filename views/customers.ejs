@@ -1,28 +1,13 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Customers</title>
-  <link rel="stylesheet" href="/styles.css">
-</head>
-<body>
-  <header>
-    <img src="/logo.png" alt="Hunter Mowing Co. Logo">
-  </header>
+<h2>Customer List</h2>
 
- <nav class="navbar" id="navbar">
-    <ul>
-      <li><a href="/">Home</a></li>
-      <li><a href="/customers">Customers</a></li>
-      <li><a href="/calendar">Calendar</a></li>
-      <li><a href="/payments">Payments</a></li>
-      <li><a href="/reports">Reports</a></li>
-      <li><a href="/logout">Logout</a></li>
-    </ul>
-  </nav>
+<!-- Add Customer Button -->
+<div style="margin-bottom: 20px;">
+  <a href="/add-customer">
+    <button>Add Customer</button>
+  </a>
+</div>
 
-  <main>
-    <h2>Customer List</h2>
-    <div class="customers-container">
+<div class="customers-container">
   <% customers.forEach(customer => { %>
     <div class="customer-card">
       <h3>
@@ -32,18 +17,20 @@
       </h3>
       <p><strong>Phone:</strong> <%= customer.phone || 'N/A' %></p>
       <p><strong>Address:</strong> <%= customer.address || 'N/A' %></p>
-      <a href="/customers/<%= customer.id %>/edit">Edit</a>
-      <form action="/customers/<%= customer.id %>/delete" method="POST" style="display:inline;">
-        <button type="submit" onclick="return confirm('Delete this customer?')">Delete</button>
-      </form>
-      <a href="/add-appointment?customer=<%= encodeURIComponent(customer.name) %>">
-  <button>Schedule Appointment</button>
-</a>
 
+      <div class="customer-actions">
+        <a href="/customers/<%= encodeURIComponent(customer.name) %>">
+          <button>Edit</button>
+        </a>
+
+        <a href="/calendar/add-appointment?customer=<%= encodeURIComponent(customer.name) %>">
+          <button>Schedule Appointment</button>
+        </a>
+
+        <form action="/customers/<%= encodeURIComponent(customer.name) %>/delete" method="POST" style="display:inline;">
+          <button type="submit" onclick="return confirm('Delete this customer?')">Delete</button>
+        </form>
+      </div>
     </div>
   <% }) %>
 </div>
-
-  </main>
-</body>
-</html>

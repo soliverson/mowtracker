@@ -1,60 +1,35 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Reports</title>
-  <link rel="stylesheet" href="/styles.css">
-</head>
-<body>
-  <header>
-    <img src="/logo.png" alt="Hunter Mowing Co. Logo">
-  </header>
 
-  <nav class="navbar" id="navbar">
-    <ul>
-      <li><a href="/">Home</a></li>
-      <li><a href="/customers">Customers</a></li>
-      <li><a href="/calendar">Calendar</a></li>
-      <li><a href="/payments">Payments</a></li>
-      <li><a href="/reports">Reports</a></li>
-      <li><a href="/logout">Logout</a></li>
-    </ul>
-  </nav>s
+<h2>Income Reports</h2>
 
-  <main>
-    <h2>Income Reports</h2>
+<form method="GET" action="/reports">
+  <label for="month">Select Month:</label>
+  <input type="month" name="month" value="<%= selectedMonth %>" required>
+  <button type="submit">View</button>
+</form>
 
-    <form method="GET" action="/reports">
-      <label for="month">Select Month:</label>
-      <input type="month" name="month" value="<%= selectedMonth %>" required>
-      <button type="submit">View</button>
-    </form>
+<h3>Summary for <%= selectedMonthLabel %></h3>
+<table>
+  <tr><th>Total Jobs</th><th>Monthly Income</th><th>Year-to-Date Income</th></tr>
+  <tr>
+    <td><%= jobs.length %></td>
+    <td>$<%= monthTotal.toFixed(2) %></td>
+    <td>$<%= ytdTotal.toFixed(2) %></td>
+  </tr>
+</table>
 
-    <h3>Summary for <%= selectedMonthLabel %></h3>
-    <table>
-      <tr><th>Total Jobs</th><th>Monthly Income</th><th>Year-to-Date Income</th></tr>
+<h3>Job Details</h3>
+<table>
+  <tr><th>Date</th><th>Customer</th><th>Amount</th><th>Notes</th></tr>
+  <% if (jobs.length === 0) { %>
+    <tr><td colspan="4">No jobs found for this month.</td></tr>
+  <% } else { %>
+    <% jobs.forEach(job => { %>
       <tr>
-        <td><%= jobs.length %></td>
-        <td>$<%= monthTotal.toFixed(2) %></td>
-        <td>$<%= ytdTotal.toFixed(2) %></td>
+        <td><%= job.date %></td>
+        <td><%= job.customer_name %></td>
+        <td>$<%= Number(job.amount_paid || 0).toFixed(2) %></td>
+        <td><%= job.notes || '' %></td>
       </tr>
-    </table>
-
-    <h3>Job Details</h3>
-    <table>
-      <tr><th>Date</th><th>Customer</th><th>Amount</th><th>Notes</th></tr>
-      <% if (jobs.length === 0) { %>
-        <tr><td colspan="4">No jobs found for this month.</td></tr>
-      <% } else { %>
-        <% jobs.forEach(job => { %>
-          <tr>
-            <td><%= job.date %></td>
-            <td><%= job.customer_name %></td>
-            <td>$<%= Number(job.amount_paid || 0).toFixed(2) %></td>
-            <td><%= job.notes || '' %></td>
-          </tr>
-        <% }) %>
-      <% } %>
-    </table>
-  </main>
-</body>
-</html>
+    <% }) %>
+  <% } %>
+</table>

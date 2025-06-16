@@ -1,18 +1,35 @@
 const db = require('./db');
+const bcrypt = require('bcryptjs');
 
-// Register a new user
-function register(name, email, password, callback) {
-  db.query(
-    'INSERT INTO users (name, email, password) VALUES ($1, $2, $3) RETURNING *',
-    [name, email, password],
-    (err, result) => {
-      if (err) return callback(err);
-      callback(null, result.rows[0]);
-    }
-  );
+// Register a new user (with hashed password)
+async function register(name, email, password, callback) {
+  try {
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const result = await db.query(
+      'INSERT INTO users (name, email, password) VALUES ($1, $2, $3) RETURNING *',
+      [name, email, hashedPassword]
+    );
+    callback(null, result.rows[0]);
+  } catch (err) {
+    callback(err);
+  }
 }
 
-// Authenticate login
+// Update password for a user by ID
+async function updatePassword(userId, plainTextPassword, callback) {
+  try {
+    const hashedPassword = await bcrypt.hash(plainTextPassword, 10);
+    await db.query(
+      'UPDATE users SET password = $1 WHERE id = $2',
+      [hashedPassword, userId]
+    );
+    callback(null, true);
+  } catch (err) {
+    callback(err);
+  }
+}
+
+// Authenticate login (legacy plain-text method)
 function authenticate(email, password, callback) {
   db.query(
     'SELECT * FROM users WHERE email = $1 AND password = $2',
@@ -24,7 +41,12 @@ function authenticate(email, password, callback) {
   );
 }
 
-// Get all jobs for a user
+// Find user by email (used by login controller)
+async function findByEmail(email) {
+  return db.query('SELECT * FROM users WHERE email = $1', [email]);
+}
+
+// Job and customer functions (unchanged)
 function getJobs(userId, callback) {
   db.query(
     'SELECT * FROM jobs WHERE user_id = $1 ORDER BY date DESC',
@@ -36,7 +58,6 @@ function getJobs(userId, callback) {
   );
 }
 
-// Add a new job
 function addJob(user_id, customer_name, date, amount_paid, phone, notes, address, time, callback) {
   db.query(
     `INSERT INTO jobs (user_id, customer_name, date, amount_paid, phone, notes, address, time)
@@ -46,7 +67,6 @@ function addJob(user_id, customer_name, date, amount_paid, phone, notes, address
   );
 }
 
-// Get all jobs for a specific customer
 function getJobsByCustomer(userId, customerName, callback) {
   db.query(
     'SELECT * FROM jobs WHERE user_id = $1 AND customer_name = $2 ORDER BY date DESC',
@@ -58,7 +78,6 @@ function getJobsByCustomer(userId, customerName, callback) {
   );
 }
 
-// Delete a job by ID
 function deleteJob(userId, jobId, callback) {
   db.query(
     'DELETE FROM jobs WHERE user_id = $1 AND id = $2',
@@ -67,7 +86,6 @@ function deleteJob(userId, jobId, callback) {
   );
 }
 
-// Add a new customer
 function addCustomer(user_id, name, phone, address, callback) {
   db.query(
     `INSERT INTO customers (user_id, name, phone, address)
@@ -77,7 +95,6 @@ function addCustomer(user_id, name, phone, address, callback) {
   );
 }
 
-// Get all customers for a user
 function getCustomers(userId, callback) {
   db.query(
     'SELECT * FROM customers WHERE user_id = $1 ORDER BY name',
@@ -89,7 +106,6 @@ function getCustomers(userId, callback) {
   );
 }
 
-// Get one customer by ID
 function getCustomerById(userId, customerId, callback) {
   db.query(
     'SELECT * FROM customers WHERE id = $1 AND user_id = $2',
@@ -101,7 +117,6 @@ function getCustomerById(userId, customerId, callback) {
   );
 }
 
-// Update a customer
 function updateCustomer(userId, customerId, name, phone, address, callback) {
   db.query(
     'UPDATE customers SET name = $1, phone = $2, address = $3 WHERE id = $4 AND user_id = $5',
@@ -110,7 +125,6 @@ function updateCustomer(userId, customerId, name, phone, address, callback) {
   );
 }
 
-// Delete a customer
 function deleteCustomer(userId, customerId, callback) {
   db.query(
     'DELETE FROM customers WHERE id = $1 AND user_id = $2',
@@ -118,18 +132,7 @@ function deleteCustomer(userId, customerId, callback) {
     callback
   );
 }
-// Get a job by ID
-function getJobById(userId, jobId, callback) {
-  db.query(
-    'SELECT * FROM jobs WHERE id = $1 AND user_id = $2',
-    [jobId, userId],
-    (err, result) => {
-      if (err) return callback(err);
-      callback(null, result.rows[0]);
-    }
-  );
-}
-// Get a job by ID
+
 function getJobById(userId, jobId, callback) {
   db.query(
     'SELECT * FROM jobs WHERE id = $1 AND user_id = $2',
@@ -141,7 +144,6 @@ function getJobById(userId, jobId, callback) {
   );
 }
 
-// Update job
 function updateJob(userId, jobId, customer_name, date, amount_paid, phone, notes, address, time, callback) {
   db.query(
     `UPDATE jobs SET customer_name = $1, date = $2, amount_paid = $3,
@@ -154,7 +156,9 @@ function updateJob(userId, jobId, customer_name, date, amount_paid, phone, notes
 
 module.exports = {
   register,
+  updatePassword,
   authenticate,
+  findByEmail,
   getJobs,
   addJob,
   getJobsByCustomer,
@@ -164,6 +168,6 @@ module.exports = {
   getCustomerById,
   updateCustomer,
   deleteCustomer,
-   getJobById, 
+  getJobById,
   updateJob
 };

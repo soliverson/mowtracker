@@ -1,0 +1,50 @@
+<h2><%= customer.customer_name %></h2>
+
+<form method="POST" action="/customers/<%= encodeURIComponent(customer.customer_name) %>/update">
+  <label for="phone">Phone:</label>
+  <input type="text" name="phone" value="<%= customer.phone || '' %>" required><br>
+
+  <label for="address">Address:</label>
+  <input type="text" name="address" value="<%= customer.address || '' %>" required><br>
+
+  <button type="submit">Update Info</button>
+</form>
+
+<h3>Schedule New Job</h3>
+<form method="POST" action="/customers/<%= encodeURIComponent(customer.customer_name) %>/add-job">
+  <input type="hidden" name="phone" value="<%= customer.phone || '' %>">
+  <input type="hidden" name="address" value="<%= customer.address || '' %>">
+
+  <label for="date">Date:</label>
+  <input type="date" name="date" required><br>
+
+  <label for="time">Time:</label>
+  <input type="time" name="time"><br>
+
+  <label for="amount_paid">Amount Paid ($):</label>
+  <input type="number" name="amount_paid" step="0.01"><br>
+
+  <label for="notes">Notes:</label><br>
+  <textarea name="notes" rows="3" cols="40"></textarea><br>
+
+  <button type="submit">Add Job</button>
+</form>
+
+<h3>Job History</h3>
+<p><strong>Total Earned:</strong> $<%= totalPaid %></p>
+<table>
+  <tr>
+    <th>Date</th>
+    <th>Time</th>
+    <th>Paid</th>
+    <th>Notes</th>
+  </tr>
+  <% jobs.forEach(job => { %>
+    <tr>
+      <td><%= job.date?.toISOString().split('T')[0] || '' %></td>
+      <td><%= job.time || '' %></td>
+<td>$<%= (parseFloat(job.amount_paid) || 0).toFixed(2) %></td>
+      <td><%= job.notes || '' %></td>
+    </tr>
+  <% }) %>
+</table>

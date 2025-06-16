@@ -1,31 +1,6 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Dashboard</title>
-  <link rel="stylesheet" href="/styles.css">
-  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.css" rel="stylesheet" />
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-</head>
-<body>
-  <header>
-  <img src="/logo.png" alt="Hunter Mowing Co. Logo" class="animated-logo">
-    <div class="menu-toggle" onclick="toggleMenu()">☰</div>
-  </header>
+<h2>Welcome, <%= user.name %>!</h2>
 
-  <nav class="navbar" id="navbar">
-    <ul>
-      <li><a href="/">Home</a></li>
-      <li><a href="/customers">Customers</a></li>
-      <li><a href="/calendar">Calendar</a></li>
-      <li><a href="/payments">Payments</a></li>
-      <li><a href="/reports">Reports</a></li>
-      <li><a href="/logout">Logout</a></li>
-    </ul>
-  </nav>
-
-<main>
-  <h2>Welcome, <%= user.name %>!</h2>
- <div class="dashboard-cards">
+<div class="dashboard-cards">
   <div class="card">
     <a href="/customers">
       <div class="icon">👥</div>
@@ -52,33 +27,15 @@
   </div>
 </div>
 
-  <p class="income-display">Total Income: $<%= total.toFixed(2) %></p>
+<p class="income-display">Total Income: $<%= total.toFixed(2) %></p>
 
-  <h3>Upcoming Appointments</h3>
-  <% if (upcomingJobs.length === 0) { %>
-    <p>No upcoming jobs scheduled.</p>
-  <% } else { %>
-    <ul class="upcoming-jobs">
-      <% upcomingJobs.forEach(job => { %>
-        <li><strong><%= job.customer_name %></strong> - <%= job.date %> <%= job.time || '' %></li>
-      <% }) %>
-    </ul>
-  <% } %>
-</main>
-
-
-  <script>
-    function toggleMenu() {
-      document.getElementById('navbar').classList.toggle('active');
-    }
-  </script>
-<div class="mobile-nav">
-  <a href="/">🏠</a>
-  <a href="/calendar">📅</a>
-  <a href="/add-appointment">➕</a>
-  <a href="/payments">💵</a>
-  <a href="/logout">🚪</a>
-</div>
-
-</body>
-</html>
+<h3>Upcoming Appointments</h3>
+<% if (upcomingJobs.length === 0) { %>
+  <p>No upcoming jobs scheduled.</p>
+<% } else { %>
+  <ul class="upcoming-jobs">
+    <% upcomingJobs.forEach(job => { %>
+      <li><strong><%= job.customer_name %></strong> - <%= job.date %> <%= job.time || '' %></li>
+    <% }) %>
+  </ul>
+<% } %>

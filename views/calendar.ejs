@@ -1,100 +1,88 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Calendar</title>
-  <link rel="stylesheet" href="/styles.css">
-  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.css" rel="stylesheet" />
-  <style>
-    #calendar {
-      max-width: 900px;
-      margin: 40px auto;
-      background: #fff;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    }
-  </style>
-</head>
-<body>
-  <header>
-    <img src="/logo.png" alt="Hunter Mowing Co. Logo">
-  </header>
+<h2>Scheduled Appointments</h2>
 
-  <nav class="navbar" id="navbar">
-    <ul>
-      <li><a href="/">Home</a></li>
-      <li><a href="/customers">Customers</a></li>
-      <li><a href="/calendar">Calendar</a></li>
-      <li><a href="/payments">Payments</a></li>
-      <li><a href="/reports">Reports</a></li>
-      <li><a href="/logout">Logout</a></li>
-    </ul>
-  </nav>
-  
-  <main>
-    <h2>Scheduled Appointments</h2>
+<div class="form-box">
+  <h3>Schedule a New Appointment</h3>
+  <form method="POST" action="/calendar/add-appointment">
+    <label for="customer_name">Customer:</label>
+    <select name="customer_name" required>
+      <% customers.forEach(c => { %>
+        <option value="<%= c.name %>"><%= c.name %></option>
+      <% }) %>
+    </select>
+    <input name="phone" placeholder="Phone Number">
+    <input name="date" type="date" required>
+    <input name="time" type="time" required>
+    <textarea name="notes" placeholder="Notes (optional)"></textarea>
+    <input name="address" placeholder="Address (optional)">
+    <input name="amount_paid" placeholder="Amount Paid (optional)" step="0.01">
+    <button type="submit">Schedule Appointment</button>
+  </form>
+</div>
 
-    <div class="form-box">
-<h3>Schedule a New Appointment</h3>
-<form method="POST" action="/add-appointment">
-  <label for="customer_name">Customer:</label>
-  <select name="customer_name" required>
-    <% customers.forEach(c => { %>
-      <option value="<%= c.name %>"><%= c.name %></option>
-    <% }) %>
-  </select>
-  <input name="phone" placeholder="Phone Number">
-  <input name="date" type="date" required>
-  <input name="time" type="time" required>
-  <textarea name="notes" placeholder="Notes (optional)"></textarea>
-  <input name="address" placeholder="Address (optional)">
-  <input name="amount_paid" placeholder="Amount Paid (optional)" step="0.01">
-  <button type="submit">Schedule Appointment</button>
-</form>
+<div id="calendar" style="
+  max-width: 900px;
+  margin: 40px auto;
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+"></div>
 
-    </div>
+<h2>Upcoming Appointments</h2>
+<button id="togglePastBtn">Show Past Appointments</button>
 
-    <div id="calendar"></div>
-  </main>
-
-<script>
-  document.addEventListener('DOMContentLoaded', function () {
-    const calendarEl = document.getElementById('calendar');
-    const calendar = new FullCalendar.Calendar(calendarEl, {
-      initialView: 'dayGridMonth',
-      headerToolbar: {
-        left: 'prev,next today',
-        center: 'title',
-        right: 'dayGridMonth,timeGridWeek,timeGridDay'
-      },
-      events: <%- JSON.stringify(jobs.map(job => ({
-        title: job.customer_name,
-        start: job.time ? `${job.date}T${job.time}` : `${job.date}T09:00:00`,
-        allDay: false
-      }))) %>
-    });
-    calendar.render();
-  });
-</script>
-
-<h3>All Appointments</h3>
-<table>
-  <tr><th>Customer</th><th>Date</th><th>Time</th><th>Notes</th><th>Actions</th></tr>
-  <% jobs.forEach(job => { %>
+<table class="job-table" id="appointmentsTable">
+  <thead>
     <tr>
-      <td><%= job.customer_name %></td>
-      <td><%= job.date %></td>
-      <td><%= job.time ? job.time.slice(0, 5) : 'N/A' %></td>
-      <td><%= job.notes || '' %></td>
-      <td>
-        <form method="POST" action="/jobs/<%= job.id %>/delete" onsubmit="return confirm('Delete this appointment?');">
-          <button type="submit">Delete</button>
-        </form>
-        <!-- Add Edit button here if needed -->
-      </td>
+      <th>Customer</th>
+      <th>Date</th>
+      <th>Time</th>
+      <th>Amount Paid</th>
+      <th>Phone</th>
+      <th>Address</th>
+      <th>Notes</th>
+      <th>Actions</th>
     </tr>
-  <% }) %>
+  </thead>
+  <tbody>
+    <% jobs.forEach(job => {
+      const isPast = new Date(job.date) < new Date(new Date().setDate(new Date().getDate() - 1));
+    %>
+      <tr class="<%= isPast ? 'past-appointment' : '' %>">
+        <td><%= job.customer_name %></td>
+        <td><%= new Date(job.date).toLocaleDateString() %></td>
+        <td><%= job.time || '' %></td>
+        <td>$<%= Number(job.amount_paid || 0).toFixed(2) %></td>
+        <td><%= job.phone || '' %></td>
+        <td><%= job.address || '' %></td>
+        <td><%= job.notes || '' %></td>
+        <td>
+          <a href="/calendar/jobs/<%= job.id %>/edit">Edit</a>
+          <form action="/calendar/jobs/<%= job.id %>/delete" method="POST" style="display:inline;">
+            <button type="submit" onclick="return confirm('Delete this appointment?')">Delete</button>
+          </form>
+        </td>
+      </tr>
+    <% }) %>
+  </tbody>
 </table>
 
-</body>
-</html>
+<script>
+  const toggleBtn = document.getElementById('togglePastBtn');
+  let showingPast = false;
+
+  toggleBtn.addEventListener('click', () => {
+    showingPast = !showingPast;
+    document.querySelectorAll('.past-appointment').forEach(row => {
+      row.style.display = showingPast ? 'table-row' : 'none';
+    });
+    toggleBtn.textContent = showingPast ? 'Hide Past Appointments' : 'Show Past Appointments';
+  });
+
+  // Hide past appointments by default
+  window.onload = () => {
+    document.querySelectorAll('.past-appointment').forEach(row => {
+      row.style.display = 'none';
+    });
+  };
+</script>
