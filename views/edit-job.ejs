@@ -1,56 +1,88 @@
 <h2>Edit Appointment</h2>
+
 <form action="/calendar/jobs/<%= job.id %>/update" method="POST">
-  <label for="customer_name">Customer:</label>
-  <select name="customer_name" required>
+
+  <!-- CUSTOMER PICKER -->
+  <label for="customerSelect">Customer:</label>
+  <select id="customerSelect" name="customer_id" required onchange="fillCustomerDetails()">
     <% customers.forEach(c => { %>
-      <option value="<%= c.name %>" <%= c.name === job.customer_name ? 'selected' : '' %>>
+      <option value="<%= c.id %>"
+              data-name="<%= c.name %>"
+              data-phone="<%= c.phone %>"
+              data-address="<%= c.address %>"
+              <%= c.name === job.customer_name ? 'selected' : '' %>>
         <%= c.name %>
       </option>
     <% }) %>
-  </select><br>
+  </select>
 
-  <label for="date">Date:</label>
-  <input type="date" name="date" value="<%= job.date.toISOString().split('T')[0] %>" required><br>
+  <!-- send text name too -->
+  <input type="hidden" name="customer_name" id="customer_name" value="<%= job.customer_name %>">
 
-  <label for="time">Time:</label>
-  <input type="time" name="time" value="<%= job.time || '' %>"><br>
+  <br>
 
-  <label for="amount_paid">Amount Paid ($):</label>
-  <input type="number" name="amount_paid" step="0.01" value="<%= job.amount_paid || '' %>"><br>
+  <!-- DATE / TIME -->
+  <label>Date:</label>
+  <input type="date"
+         name="date"
+         value="<%= job.date.toISOString().split('T')[0] %>"
+         required>
 
-  <label for="phone">Phone:</label>
-  <input type="text" name="phone" value="<%= job.phone || '' %>"><br>
+  <label>Time:</label>
+  <input type="time" name="time" value="<%= job.time || '' %>">
 
-  <label for="address">Address:</label>
-  <input type="text" name="address" value="<%= job.address || '' %>"><br>
+  <!-- MONEY & CONTACT -->
+  <label>Amount Paid ($):</label>
+  <input type="number" name="amount_paid" step="0.01" value="<%= job.amount_paid || '' %>">
 
-  <label for="notes">Notes:</label><br>
-  <textarea name="notes" rows="4" cols="40"><%= job.notes || '' %></textarea><br>
+  <label>Phone:</label>
+  <input type="text" id="phone" name="phone" value="<%= job.phone || '' %>">
 
+  <label>Address:</label>
+  <input type="text" id="address" name="address" value="<%= job.address || '' %>">
+
+  <!-- NOTES -->
+  <label>Notes:</label>
+  <textarea name="notes" rows="4" cols="40"><%= job.notes || '' %></textarea>
+
+  <!-- RECURRING TOGGLE -->
   <label>
     <input type="checkbox" id="is_recurring" name="is_recurring" value="true">
     Repeat weekly (creates future jobs)
-  </label><br>
+  </label>
 
   <div id="repeatOptions" style="display:none;">
     <label for="recurring_weeks">Repeat for how many weeks?</label>
-    <input type="number" name="recurring_weeks" id="recurring_weeks" min="1" max="52" value="1"><br>
+    <input  type="number"
+            id="recurring_weeks"
+            name="recurring_weeks"
+            min="1" max="52" value="1">
   </div>
 
   <button type="submit">Update Appointment</button>
 </form>
 
 <script>
-  const recurringCheckbox = document.getElementById('is_recurring');
-  const repeatOptions = document.getElementById('repeatOptions');
+/* ---------- helper: auto-fill contact fields ---------- */
+function fillCustomerDetails () {
+  const sel      = document.getElementById('customerSelect');
+  const opt      = sel.options[sel.selectedIndex] || {};
+  document.getElementById('phone').value        = opt.dataset.phone   || '';
+  document.getElementById('address').value      = opt.dataset.address || '';
+  document.getElementById('customer_name').value = opt.dataset.name   || '';
+}
 
-  recurringCheckbox.addEventListener('change', () => {
-    repeatOptions.style.display = recurringCheckbox.checked ? 'block' : 'none';
-  });
+/* ---------- toggle repeat-weekly panel ---------- */
+const recurringCB   = document.getElementById('is_recurring');
+const repeatPanel   = document.getElementById('repeatOptions');
 
-  window.onload = () => {
-    if (recurringCheckbox.checked) {
-      repeatOptions.style.display = 'block';
-    }
-  };
+recurringCB.addEventListener('change', () => {
+  repeatPanel.style.display = recurringCB.checked ? 'block' : 'none';
+});
+
+/* ---------- initialise ---------- */
+window.onload = () => {
+  fillCustomerDetails();
+  if (recurringCB.checked) repeatPanel.style.display = 'block';
+};
 </script>

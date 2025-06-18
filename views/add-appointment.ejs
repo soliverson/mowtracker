@@ -1,66 +1,89 @@
 <h2>Schedule Appointment</h2>
+
 <form action="/calendar/add-appointment" method="POST">
-  <label for="customer_name">Customer:</label>
-  <select name="customer_name" id="customer_name" required onchange="fillCustomerDetails()">
+
+  <!-- CUSTOMER PICKER -->
+  <label for="customerSelect">Customer:</label>
+  <select id="customerSelect" name="customer_id" required onchange="fillCustomerDetails()">
     <option value="">-- Select Customer --</option>
     <% customers.forEach(c => { %>
-      <option value="<%= c.name %>" 
-        data-phone="<%= c.phone %>" 
-        data-address="<%= c.address %>"
-        <%= (c.name === selectedCustomer ? 'selected' : '') %>>
+      <option value="<%= c.id %>"
+              data-name="<%= c.name %>"
+              data-phone="<%= c.phone %>"
+              data-address="<%= c.address %>">
         <%= c.name %>
       </option>
     <% }) %>
-  </select><br>
+  </select>
 
+  <!-- we still send the text name that belongs to the ID -->
+  <input type="hidden" name="customer_name" id="customer_name">
+
+  <br>
+
+  <!-- DATE / TIME -->
   <label for="date">Date:</label>
-  <input type="date" name="date" value="<%= new Date().toISOString().split('T')[0] %>" required><br>
+  <input type="date"
+         id="date"
+         name="date"
+         value="<%= new Date().toISOString().split('T')[0] %>"
+         required>
 
   <label for="time">Time:</label>
-  <input type="time" name="time"><br>
+  <input type="time" id="time" name="time">
 
+  <!-- MONEY & CONTACT -->
   <label for="amount_paid">Amount Paid ($):</label>
-  <input type="number" name="amount_paid" step="0.01"><br>
+  <input type="number" id="amount_paid" name="amount_paid" step="0.01">
 
   <label for="phone">Phone (optional):</label>
-  <input type="text" name="phone" id="phone"><br>
+  <input type="text" id="phone" name="phone">
 
   <label for="address">Address (optional):</label>
-  <input type="text" name="address" id="address"><br>
+  <input type="text" id="address" name="address">
 
-  <label for="notes">Notes:</label><br>
-  <textarea name="notes" rows="4" cols="40"></textarea><br>
+  <!-- NOTES -->
+  <label for="notes">Notes:</label>
+  <textarea id="notes" name="notes" rows="4" cols="40"></textarea>
 
+  <!-- RECURRING TOGGLE -->
   <label>
     <input type="checkbox" id="recurring" name="recurring" value="true">
     Repeat weekly
-  </label><br>
+  </label>
 
   <div id="repeatOptions" style="display:none;">
     <label for="recurring_weeks">Repeat for how many weeks?</label>
-    <input type="number" name="recurring_weeks" id="recurring_weeks" min="1" max="52" value="1"><br>
+    <input  type="number"
+            id="recurring_weeks"
+            name="recurring_weeks"
+            min="1" max="52" value="1">
   </div>
 
   <button type="submit">Add Appointment</button>
 </form>
 
 <script>
-  function fillCustomerDetails() {
-    const dropdown = document.getElementById('customer_name');
-    const selected = dropdown.options[dropdown.selectedIndex];
-    document.getElementById('phone').value = selected.getAttribute('data-phone') || '';
-    document.getElementById('address').value = selected.getAttribute('data-address') || '';
-  }
+/* ---------- helper: auto-fill contact fields ---------- */
+function fillCustomerDetails () {
+  const sel      = document.getElementById('customerSelect');
+  const opt      = sel.options[sel.selectedIndex] || {};
+  document.getElementById('phone').value        = opt.dataset.phone   || '';
+  document.getElementById('address').value      = opt.dataset.address || '';
+  document.getElementById('customer_name').value = opt.dataset.name   || '';
+}
 
-  const recurringCheckbox = document.getElementById('recurring');
-  const repeatOptions = document.getElementById('repeatOptions');
+/* ---------- toggle repeat-weekly panel ---------- */
+const recurringCB   = document.getElementById('recurring');
+const repeatPanel   = document.getElementById('repeatOptions');
 
-  recurringCheckbox.addEventListener('change', () => {
-    repeatOptions.style.display = recurringCheckbox.checked ? 'block' : 'none';
-  });
+recurringCB.addEventListener('change', () => {
+  repeatPanel.style.display = recurringCB.checked ? 'block' : 'none';
+});
 
-  window.onload = () => {
-    fillCustomerDetails();
-    if (recurringCheckbox.checked) repeatOptions.style.display = 'block';
-  };
+/* ---------- initialise on page load ---------- */
+window.onload = () => {
+  fillCustomerDetails();
+  if (recurringCB.checked) repeatPanel.style.display = 'block';
+};
 </script>

@@ -52,30 +52,31 @@
 
   <%- include('partials/footer') %>
 
-  <!-- Service Worker Registration -->
+  <!-- Menu Toggle Script -->
   <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/sw.js').then(function () {
-        console.log('Service Worker Registered');
-      });
-    }
-  </script>
-
-  <!-- Menu Toggle Script with Accessibility -->
-  <script>
-    function toggleMenu() {
-      const navbar = document.getElementById('navbar');
-      navbar.classList.toggle('active');
-    }
-
     document.addEventListener('DOMContentLoaded', () => {
-      // Close mobile menu when a nav link is clicked
+      const hamburger = document.querySelector(".hamburger");
+      const navbar = document.querySelector(".navbar");
+
+      if (hamburger && navbar) {
+        hamburger.addEventListener("click", () => {
+          navbar.classList.toggle("active");
+        });
+      }
+
+      // Auto-close menu on link click
       document.querySelectorAll('#navbar ul li a').forEach(link => {
         link.addEventListener('click', () => {
-          const navbar = document.getElementById('navbar');
           navbar.classList.remove('active');
         });
       });
+
+      // Register service worker
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/sw.js').then(() => {
+          console.log('Service Worker registered');
+        });
+      }
     });
   </script>
 </body>

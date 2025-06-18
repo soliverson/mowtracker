@@ -11,6 +11,7 @@ const customerRoutes = require('./routes/customerRoutes');
 const calendarRoutes = require('./routes/calendarRoutes');
 const paymentRoutes = require('./routes/paymentRoutes');
 const reportRoutes = require('./routes/reportRoutes');
+const expensesRoutes = require('./routes/expensesRoutes');
 
 const app = express();
 
@@ -33,6 +34,7 @@ app.use('/customers', customerRoutes);
 app.use('/calendar', calendarRoutes);
 app.use('/payments', paymentRoutes);
 app.use('/reports', reportRoutes);
+app.use('/expenses', expensesRoutes);
 
 // Health check
 app.get('/status', (req, res) => res.json({ status: 'ok' }));

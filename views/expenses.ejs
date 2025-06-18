@@ -1,0 +1,67 @@
+<h2>Track Your Business Expenses</h2>
+
+<section class="expense-form">
+  <h3>Add a New Expense</h3>
+<form action="/expenses/add" method="POST">
+    <label for="category">Category:</label>
+    <select name="category" required>
+      <option value="Fuel">Fuel</option>
+      <option value="Equipment">Equipment</option>
+      <option value="Repairs">Repairs</option>
+      <option value="Supplies">Supplies</option>
+      <option value="Marketing">Marketing</option>
+      <option value="Other">Other</option>
+    </select><br>
+
+    <label for="description">Description:</label>
+    <input type="text" name="description" required><br>
+
+    <label for="amount">Amount ($):</label>
+    <input type="number" name="amount" step="0.01" required><br>
+
+    <label for="date">Date:</label>
+    <input type="date" name="date" value="<%= new Date().toISOString().split('T')[0] %>" required><br>
+
+    <button type="submit">Add Expense</button>
+  </form>
+</section>
+
+<hr>
+
+<section class="expense-summary">
+  <h3>Total Spent: $<%= total %></h3>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Category</th>
+        <th>Description</th>
+        <th>Amount</th>
+        <th>Date</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% expenses.forEach(e => { %>
+        <tr>
+          <td><%= e.category %></td>
+          <td><%= e.description %></td>
+          <td>$<%= parseFloat(e.amount).toFixed(2) %></td>
+          <td><%= new Date(e.date).toISOString().split('T')[0] %></td>
+          <td>
+            <form action="/expenses/<%= e.id %>/delete" method="POST" onsubmit="return confirm('Delete this expense?');">
+              <button type="submit">Delete</button>
+                <a href="/expenses/<%= e.id %>/edit">
+    <button>Edit</button>
+            </form>
+          </td>
+          
+  </a>
+</td>
+
+        </tr>
+        
+      <% }) %>
+    </tbody>
+  </table>
+</section>
