@@ -1,10 +1,11 @@
 <h2>Track Your Business Expenses</h2>
 
-<section class="expense-form">
-  <h3>Add a New Expense</h3>
+<div class="form-box">
+  <div class="center-form">  <h3>Add a New Expense</h3>
 <form action="/expenses/add" method="POST">
     <label for="category">Category:</label>
     <select name="category" required>
+     
       <option value="Fuel">Fuel</option>
       <option value="Equipment">Equipment</option>
       <option value="Repairs">Repairs</option>
@@ -12,7 +13,7 @@
       <option value="Marketing">Marketing</option>
       <option value="Other">Other</option>
     </select><br>
-
+ <br><br>
     <label for="description">Description:</label>
     <input type="text" name="description" required><br>
 
@@ -31,8 +32,9 @@
 <section class="expense-summary">
   <h3>Total Spent: $<%= total %></h3>
 
-  <table>
-    <thead>
+<div class="table-responsive">
+  <div style="display: flex; justify-content: center;">
+    <table class="job-table" id="appointmentsTable">    <thead>
       <tr>
         <th>Category</th>
         <th>Description</th>

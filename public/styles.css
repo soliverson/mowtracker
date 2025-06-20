@@ -116,7 +116,10 @@ h2 {
 }
 
 table {
-  width: 100%;
+  
+  width: 70%;
+  align-items: center;
+  justify-content: center;
   border-collapse: collapse;
   margin-top: 20px;
   background-color: #f3f8f5;
@@ -159,6 +162,21 @@ input, button {
   display: block;
   width: 100%;
   max-width: 300px;
+}
+.report-container {
+  max-width: 900px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.report-container form {
+  margin-bottom: 20px;
+}
+
+.report-container table {
+  margin: 0 auto 30px;
+  width: 100%;
+  max-width: 800px;
 }
 
 textarea {
@@ -308,7 +326,7 @@ a {
 
 /* FullCalendar */
 #calendar {
-  max-width: 100%;
+  max-width: 70%;
   margin: 40px auto;
   background: #fff;
   padding: 15px;
@@ -383,9 +401,13 @@ a {
   .hamburger {
     display: block;
   }
+  .navbar {
+  position: fixed;
 
   .navbar ul {
     display: none;
+    position: fixed;
+
     flex-direction: column;
     align-items: center;
     padding: 10px 0;
@@ -394,6 +416,8 @@ a {
 
   .navbar.active ul {
     display: flex;
+    position: fixed;
+
   }
 
   table, th, td {
@@ -415,6 +439,9 @@ a {
   }
 
   .job-table {
+    display: inline-block;
+    align-items: center;
+    justify-content: center;
     font-size: 14px;
   }
 }
@@ -434,4 +461,54 @@ a {
     font-size: 13px;
     white-space: normal;
   }
+}
+.calendar-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  padding: 0 10px;
+}
+
+#calendar {
+  width: 40%;
+  min-width: 320px;
+  background: #fff;
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Make calendar text wrap */
+.fc-event-title,
+.fc-daygrid-day-number {
+  white-space: normal !important;
+  word-wrap: break-word;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  #calendar {
+    font-size: 14px;
+  }
+
+  .fc .fc-toolbar-title {
+    font-size: 16px;
+    white-space: normal;
+  }
+
+  .fc .fc-button {
+    font-size: 12px;
+    padding: 4px 6px;
+  }
+
+  .fc .fc-daygrid-day-frame {
+    min-height: 60px;
+  }
+
+  .fc-col-header-cell {
+    font-size: 12px;
+    padding: 4px;
+  }
+}
+
+
 }

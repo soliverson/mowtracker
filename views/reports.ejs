@@ -1,35 +1,38 @@
-
 <h2>Income Reports</h2>
-<div class="center-form">
-<form method="GET" action="/reports">
-  <label for="month">Select Month:</label>
-  <input type="month" name="month" value="<%= selectedMonth %>" required>
-  <button type="submit">View</button>
-</form>
-</div>
-<h3>Summary for <%= selectedMonthLabel %></h3>
-<table>
-  <tr><th>Total Jobs</th><th>Monthly Income</th><th>Year-to-Date Income</th></tr>
-  <tr>
-    <td><%= jobs.length %></td>
-    <td>$<%= monthTotal.toFixed(2) %></td>
-    <td>$<%= ytdTotal.toFixed(2) %></td>
-  </tr>
-</table>
 
-<h3>Job Details</h3>
-<table>
-  <tr><th>Date</th><th>Customer</th><th>Amount</th><th>Notes</th></tr>
-  <% if (jobs.length === 0) { %>
-    <tr><td colspan="4">No jobs found for this month.</td></tr>
-  <% } else { %>
-    <% jobs.forEach(job => { %>
-      <tr>
-        <td><%= job.date %></td>
-        <td><%= job.customer_name %></td>
-        <td>$<%= Number(job.amount_paid || 0).toFixed(2) %></td>
-        <td><%= job.notes || '' %></td>
-      </tr>
-    <% }) %>
-  <% } %>
-</table>
+<div class="report-container">
+  <div style="display: flex; justify-content: center;">
+    <form method="GET" action="/reports">
+      <label for="month">Select Month:</label>
+      <input type="month" name="month" value="<%= selectedMonth %>" required>
+      <button type="submit">View</button>
+    </form>
+  </div>
+
+  <h3>Summary for <%= selectedMonthLabel %></h3>
+  <table>
+    <tr><th>Total Jobs</th><th>Monthly Income</th><th>Year-to-Date Income</th></tr>
+    <tr>
+      <td><%= jobs.length %></td>
+      <td>$<%= monthTotal.toFixed(2) %></td>
+      <td>$<%= ytdTotal.toFixed(2) %></td>
+    </tr>
+  </table>
+
+  <h3>Job Details</h3>
+  <table>
+    <tr><th>Date</th><th>Customer</th><th>Amount</th><th>Notes</th></tr>
+    <% if (jobs.length === 0) { %>
+      <tr><td colspan="4">No jobs found for this month.</td></tr>
+    <% } else { %>
+      <% jobs.forEach(job => { %>
+        <tr>
+          <td><%= job.date %></td>
+          <td><%= job.customer_name %></td>
+          <td>$<%= Number(job.amount_paid || 0).toFixed(2) %></td>
+          <td><%= job.notes || '' %></td>
+        </tr>
+      <% }) %>
+    <% } %>
+  </table>
+</div>
