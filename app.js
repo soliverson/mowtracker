@@ -12,7 +12,7 @@ const calendarRoutes = require('./routes/calendarRoutes');
 const paymentRoutes = require('./routes/paymentRoutes');
 const reportRoutes = require('./routes/reportRoutes');
 const expensesRoutes = require('./routes/expensesRoutes');
-
+const fitnessRoutes = require('./routes/fitnessRoutes');
 const app = express();
 
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -35,6 +35,7 @@ app.use('/calendar', calendarRoutes);
 app.use('/payments', paymentRoutes);
 app.use('/reports', reportRoutes);
 app.use('/expenses', expensesRoutes);
+app.use('/fitness', fitnessRoutes);
 
 // Health check
 app.get('/status', (req, res) => res.json({ status: 'ok' }));

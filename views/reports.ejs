@@ -1,12 +1,12 @@
 
 <h2>Income Reports</h2>
-
+<div class="center-form">
 <form method="GET" action="/reports">
   <label for="month">Select Month:</label>
   <input type="month" name="month" value="<%= selectedMonth %>" required>
   <button type="submit">View</button>
 </form>
-
+</div>
 <h3>Summary for <%= selectedMonthLabel %></h3>
 <table>
   <tr><th>Total Jobs</th><th>Monthly Income</th><th>Year-to-Date Income</th></tr>

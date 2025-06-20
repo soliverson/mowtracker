@@ -1,0 +1,30 @@
+<h2>Workout History</h2>
+
+<% if (workouts.length === 0) { %>
+  <p>No workouts logged yet.</p>
+<% } else { %>
+  <table>
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Exercise</th>
+        <th>Reps</th>
+        <th>Weight (lbs)</th>
+        <th>Distance (mi)</th>
+        <th>Time (min)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% workouts.forEach(workout => { %>
+        <tr>
+          <td><%= workout.date %></td>
+          <td><%= workout.exercise %></td>
+          <td><%= workout.reps %></td>
+          <td><%= workout.weight %></td>
+          <td><%= workout.distance %></td>
+          <td><%= workout.time %></td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+<% } %>

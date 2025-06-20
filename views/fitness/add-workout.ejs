@@ -1,0 +1,23 @@
+<h2>Log a Workout</h2>
+
+<form action="/fitness/add" method="POST">
+  <label>Date:</label>
+  <input type="date" name="date" required>
+
+  <label>Exercise Name:</label>
+  <input type="text" name="exercise" required>
+
+  <label>Reps:</label>
+  <input type="number" name="reps" required>
+
+  <label>Weight (lbs):</label>
+  <input type="number" name="weight">
+
+  <label>Distance (miles):</label>
+  <input type="number" name="distance" step="0.01">
+
+  <label>Time (minutes):</label>
+  <input type="number" name="time" step="0.1">
+
+  <button type="submit">Add Workout</button>
+</form>

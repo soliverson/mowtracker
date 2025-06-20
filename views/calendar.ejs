@@ -1,24 +1,27 @@
 <h2>Scheduled Appointments</h2>
 
 <div class="form-box">
-  <h3>Schedule a New Appointment</h3>
-  <form method="POST" action="/calendar/add-appointment">
-    <label for="customer_name">Customer:</label>
-    <select name="customer_name" required>
-      <% customers.forEach(c => { %>
-        <option value="<%= c.name %>"><%= c.name %></option>
-      <% }) %>
-    </select>
-    <input name="phone" placeholder="Phone Number">
-    <input name="date" type="date" required>
-    <input name="time" type="time" required>
-    <textarea name="notes" placeholder="Notes (optional)"></textarea>
-    <input name="address" placeholder="Address (optional)">
-    <input name="amount_paid" placeholder="Amount Paid (optional)" step="0.01">
-    <button type="submit">Schedule Appointment</button>
-  </form>
+  <div class="center-form">
+    <h3>Schedule a New Appointment</h3>
+    <form method="POST" action="/calendar/add-appointment">
+      <label for="customer_name">Customer:</label>
+      <select name="customer_name" required>
+        <% customers.forEach(c => { %>
+          <option value="<%= c.name %>"><%= c.name %></option>
+        <% }) %>
+      </select>
+      <input name="phone" placeholder="Phone Number">
+      <input name="date" type="date" required>
+      <input name="time" type="time" required>
+      <textarea name="notes" placeholder="Notes (optional)"></textarea>
+      <input name="address" placeholder="Address (optional)">
+      <input name="amount_paid" placeholder="Amount Paid (optional)" step="0.01">
+      <button type="submit">Schedule Appointment</button>
+    </form>
+  </div>
 </div>
 
+<!-- FullCalendar -->
 <div id="calendar" style="
   max-width: 900px;
   margin: 40px auto;
@@ -28,8 +31,29 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 "></div>
 
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const calendarEl = document.getElementById('calendar');
+    const calendar = new FullCalendar.Calendar(calendarEl, {
+      initialView: 'dayGridMonth',
+      headerToolbar: {
+        left: 'prev,next today',
+        center: 'title',
+        right: 'dayGridMonth,timeGridWeek,timeGridDay'
+      },
+      events: '/calendar/events',
+      height: 'auto',
+      themeSystem: 'standard'
+    });
+    calendar.render();
+  });
+</script>
+
 <h2>Upcoming Appointments</h2>
-<button id="togglePastBtn">Show Past Appointments</button>
+
+<div style="text-align: center; margin-bottom: 15px;">
+  <button id="togglePastBtn">Show Past Appointments</button>
+</div>
 
 <table class="job-table" id="appointmentsTable">
   <thead>
@@ -79,7 +103,6 @@
     toggleBtn.textContent = showingPast ? 'Hide Past Appointments' : 'Show Past Appointments';
   });
 
-  // Hide past appointments by default
   window.onload = () => {
     document.querySelectorAll('.past-appointment').forEach(row => {
       row.style.display = 'none';

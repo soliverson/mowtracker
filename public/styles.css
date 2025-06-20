@@ -10,26 +10,41 @@ body {
 }
 
 header {
+  position: fixed;
+  top: 0;
+  left: 0;
   width: 100%;
   background-color: #0d3824;
-  padding: 20px 50px;
+  padding: 10px 20px;
   display: flex;
   align-items: center;
   justify-content: center;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  height: 80px; /* Adjusted height for sticky header */
 }
 
 header img {
-  height: 300px;
-  width: 300px;
+  height: 110px;
+  width: auto;
 }
 
 .navbar {
+  position: fixed;
+  top: 80px; /* Positioned right below the header */
+  left: 0;
   width: 100%;
   background-color: #0d3824;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
-  z-index: 1000;
+  z-index: 999;
+  padding: 10px 0;
 }
+
+/* Push the content down so it's not behind the fixed header/navbar */
+main {
+  margin-top: 140px; /* 80px (header) + ~60px (navbar) */
+}
+
 
 .navbar ul {
   list-style: none;
@@ -272,6 +287,30 @@ a {
   justify-content: center;
   gap: 30px;
   margin: 30px 0;
+}
+.center-form {
+  text-align: center;
+  margin: 20px 0;
+}
+
+.center-form form {
+  display: inline-block;
+}
+.center-form button {
+  padding: 10px 20px;
+  font-size: 16px;
+}
+.center-button {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+}
+#calendar {
+  max-width: 900px;
+  margin: 40px auto;
+}
+.fc {
+  font-family: inherit;
 }
 
 .card {

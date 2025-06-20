@@ -1,0 +1,31 @@
+<h2>Weight Tracker</h2>
+
+<form action="/fitness/weight" method="POST">
+  <label>Date:</label>
+  <input type="date" name="date" required>
+
+  <label>Weight (lbs):</label>
+  <input type="number" name="weight" required step="0.1">
+
+  <button type="submit">Log Weight</button>
+</form>
+
+<% if (weights.length > 0) { %>
+  <h3>Weight Log</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Weight (lbs)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% weights.forEach(entry => { %>
+        <tr>
+          <td><%= entry.date %></td>
+          <td><%= entry.weight %></td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+<% } %>

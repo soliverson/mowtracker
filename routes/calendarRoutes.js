@@ -187,5 +187,14 @@ router.post('/jobs/:id/delete', checkAuth, async (req, res) => {
     res.status(500).send('Error deleting job');
   }
 });
+// GET calendar events in JSON
+router.get('/events', checkAuth, async (req, res) => {
+  const userId = req.session.user.id;
+  const jobs = await db.query(
+    'SELECT id, customer_name AS title, date AS start FROM jobs WHERE user_id = $1',
+    [userId]
+  );
+  res.json(jobs.rows);
+});
 
 module.exports = router;
