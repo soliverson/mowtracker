@@ -15,13 +15,13 @@ header {
   left: 0;
   width: 100%;
   background-color: #0d3824;
-  padding: 10px 20px;
+  padding: 15px 20px;
   display: flex;
   align-items: center;
   justify-content: center;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
   z-index: 1000;
-  height: 80px; /* Adjusted height for sticky header */
+  height: 80px;
 }
 
 header img {
@@ -31,20 +31,14 @@ header img {
 
 .navbar {
   position: fixed;
-  top: 80px; /* Positioned right below the header */
+  top: 100px;
   left: 0;
   width: 100%;
   background-color: #0d3824;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
   z-index: 999;
-  padding: 10px 0;
+  padding: 8px 0;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
 }
-
-/* Push the content down so it's not behind the fixed header/navbar */
-main {
-  margin-top: 140px; /* 80px (header) + ~60px (navbar) */
-}
-
 
 .navbar ul {
   list-style: none;
@@ -70,6 +64,13 @@ main {
   text-decoration: underline;
 }
 
+/* Push content below header + navbar */
+main {
+  margin-top: 140px;
+  padding: 20px;
+}
+
+/* Hamburger menu */
 .hamburger {
   display: none;
   background: #0d3824;
@@ -80,10 +81,6 @@ main {
   cursor: pointer;
   font-weight: bold;
   width: 100%;
-}
-
-main {
-  padding: 20px;
 }
 
 h2 {
@@ -288,6 +285,7 @@ a {
   gap: 30px;
   margin: 30px 0;
 }
+
 .center-form {
   text-align: center;
   margin: 20px 0;
@@ -300,19 +298,23 @@ a {
   padding: 10px 20px;
   font-size: 16px;
 }
+
 .center-button {
   display: flex;
   justify-content: center;
   margin: 20px 0;
 }
+
 #calendar {
   max-width: 900px;
   margin: 40px auto;
 }
+
 .fc {
   font-family: inherit;
 }
 
+/* Cards on dashboard */
 .card {
   background-color: #2e4d3d;
   color: #f3e5ab;
@@ -345,7 +347,6 @@ a {
   transition: transform 0.3s ease;
 }
 
-/* Pulse animation */
 .card:hover .icon {
   animation: pulse 0.6s ease;
 }
@@ -365,7 +366,7 @@ a {
   transform: scale(1.1);
 }
 
-/* Responsive Adjustments */
+/* Responsive Tweaks */
 @media (max-width: 768px) {
   .hamburger {
     display: block;
@@ -402,5 +403,48 @@ a {
   th, td {
     font-size: 14px;
     white-space: normal;
+  }
+}
+#calendar {
+  max-width: 100%;
+  margin: 40px auto;
+  background: #fff;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow-x: auto;
+}
+
+.fc-event-title {
+  white-space: normal !important;
+  word-wrap: break-word;
+}
+
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+}
+
+@media (max-width: 768px) {
+  #calendar {
+    padding: 10px;
+    font-size: 14px;
+  }
+
+  .fc .fc-toolbar-title {
+    font-size: 16px;
+  }
+
+  .fc .fc-button {
+    font-size: 12px;
+    padding: 4px 8px;
+  }
+
+  th, td {
+    font-size: 13px;
+  }
+
+  .job-table {
+    font-size: 14px;
   }
 }

@@ -22,14 +22,7 @@
 </div>
 
 <!-- FullCalendar -->
-<div id="calendar" style="
-  max-width: 900px;
-  margin: 40px auto;
-  background: #fff;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-"></div>
+<div id="calendar"></div>
 
 <script>
   document.addEventListener('DOMContentLoaded', () => {
@@ -43,53 +36,55 @@
       },
       events: '/calendar/events',
       height: 'auto',
-      themeSystem: 'standard'
+      eventDisplay: 'block',
+      contentHeight: 'auto'
     });
     calendar.render();
   });
 </script>
 
 <h2>Upcoming Appointments</h2>
-
-<div style="text-align: center; margin-bottom: 15px;">
+<div class="center-button">
   <button id="togglePastBtn">Show Past Appointments</button>
 </div>
 
-<table class="job-table" id="appointmentsTable">
-  <thead>
-    <tr>
-      <th>Customer</th>
-      <th>Date</th>
-      <th>Time</th>
-      <th>Amount Paid</th>
-      <th>Phone</th>
-      <th>Address</th>
-      <th>Notes</th>
-      <th>Actions</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% jobs.forEach(job => {
-      const isPast = new Date(job.date) < new Date(new Date().setDate(new Date().getDate() - 1));
-    %>
-      <tr class="<%= isPast ? 'past-appointment' : '' %>">
-        <td><%= job.customer_name %></td>
-        <td><%= new Date(job.date).toLocaleDateString() %></td>
-        <td><%= job.time || '' %></td>
-        <td>$<%= Number(job.amount_paid || 0).toFixed(2) %></td>
-        <td><%= job.phone || '' %></td>
-        <td><%= job.address || '' %></td>
-        <td><%= job.notes || '' %></td>
-        <td>
-          <a href="/calendar/jobs/<%= job.id %>/edit">Edit</a>
-          <form action="/calendar/jobs/<%= job.id %>/delete" method="POST" style="display:inline;">
-            <button type="submit" onclick="return confirm('Delete this appointment?')">Delete</button>
-          </form>
-        </td>
+<div class="table-responsive">
+  <table class="job-table" id="appointmentsTable">
+    <thead>
+      <tr>
+        <th>Customer</th>
+        <th>Date</th>
+        <th>Time</th>
+        <th>Amount Paid</th>
+        <th>Phone</th>
+        <th>Address</th>
+        <th>Notes</th>
+        <th>Actions</th>
       </tr>
-    <% }) %>
-  </tbody>
-</table>
+    </thead>
+    <tbody>
+      <% jobs.forEach(job => {
+        const isPast = new Date(job.date) < new Date(new Date().setDate(new Date().getDate() - 1));
+      %>
+        <tr class="<%= isPast ? 'past-appointment' : '' %>">
+          <td><%= job.customer_name %></td>
+          <td><%= new Date(job.date).toLocaleDateString() %></td>
+          <td><%= job.time || '' %></td>
+          <td>$<%= Number(job.amount_paid || 0).toFixed(2) %></td>
+          <td><%= job.phone || '' %></td>
+          <td><%= job.address || '' %></td>
+          <td><%= job.notes || '' %></td>
+          <td>
+            <a href="/calendar/jobs/<%= job.id %>/edit">Edit</a>
+            <form action="/calendar/jobs/<%= job.id %>/delete" method="POST" style="display:inline;">
+              <button type="submit" onclick="return confirm('Delete this appointment?')">Delete</button>
+            </form>
+          </td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>
 
 <script>
   const toggleBtn = document.getElementById('togglePastBtn');
