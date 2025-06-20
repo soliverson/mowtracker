@@ -7,6 +7,7 @@ body {
   align-items: center;
   justify-content: flex-start;
   min-height: 100vh;
+  font-family: sans-serif;
 }
 
 header {
@@ -64,13 +65,13 @@ header img {
   text-decoration: underline;
 }
 
-/* Push content below header + navbar */
+/* Push content below fixed header + navbar */
 main {
-  margin-top: 140px;
+  margin-top: 150px;
   padding: 20px;
+  width: 100%;
 }
 
-/* Hamburger menu */
 .hamburger {
   display: none;
   background: #0d3824;
@@ -305,16 +306,27 @@ a {
   margin: 20px 0;
 }
 
+/* FullCalendar */
 #calendar {
-  max-width: 900px;
+  max-width: 100%;
   margin: 40px auto;
+  background: #fff;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow-x: auto;
 }
 
 .fc {
   font-family: inherit;
 }
 
-/* Cards on dashboard */
+.fc-event-title {
+  white-space: normal !important;
+  word-wrap: break-word;
+}
+
+/* Dashboard Cards */
 .card {
   background-color: #2e4d3d;
   color: #f3e5ab;
@@ -387,45 +399,7 @@ a {
   table, th, td {
     font-size: 14px;
   }
-}
 
-@media (max-width: 600px) {
-  input, button, textarea {
-    width: 100%;
-  }
-
-  table {
-    display: block;
-    overflow-x: auto;
-    white-space: nowrap;
-  }
-
-  th, td {
-    font-size: 14px;
-    white-space: normal;
-  }
-}
-#calendar {
-  max-width: 100%;
-  margin: 40px auto;
-  background: #fff;
-  padding: 15px;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  overflow-x: auto;
-}
-
-.fc-event-title {
-  white-space: normal !important;
-  word-wrap: break-word;
-}
-
-.table-responsive {
-  width: 100%;
-  overflow-x: auto;
-}
-
-@media (max-width: 768px) {
   #calendar {
     padding: 10px;
     font-size: 14px;
@@ -440,11 +414,24 @@ a {
     padding: 4px 8px;
   }
 
-  th, td {
-    font-size: 13px;
-  }
-
   .job-table {
     font-size: 14px;
+  }
+}
+
+@media (max-width: 600px) {
+  input, button, textarea {
+    width: 100%;
+  }
+
+  table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  th, td {
+    font-size: 13px;
+    white-space: normal;
   }
 }
