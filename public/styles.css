@@ -526,3 +526,26 @@ a {
 
 
 }
+@media (max-width: 768px) {
+  .fc-header-toolbar .fc-toolbar-chunk:nth-child(3) {
+    display: none; /* Hide right side (view buttons) */
+  }
+  .fc-toolbar-title {
+    font-size: 1.1rem;
+  }
+  .fc-event {
+    display: none !important; /* Hide event names */
+  }
+  .fc-daygrid-day-number {
+    font-weight: bold;
+    position: relative;
+  }
+  .fc-daygrid-day.fc-day-has-event .fc-daygrid-day-number::after {
+    content: "•";
+    color: #007bff;
+    font-size: 1.2em;
+    position: absolute;
+    top: 0;
+    right: 4px;
+  }
+}

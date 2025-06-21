@@ -29,19 +29,43 @@
 <script>
   document.addEventListener('DOMContentLoaded', () => {
     const calendarEl = document.getElementById('calendar');
+    const isMobile = window.innerWidth < 768;
+
     const calendar = new FullCalendar.Calendar(calendarEl, {
       initialView: 'dayGridMonth',
       headerToolbar: {
         left: 'prev,next today',
         center: 'title',
-        right: 'dayGridMonth,timeGridWeek,timeGridDay'
+        right: isMobile ? '' : 'dayGridMonth,timeGridWeek,timeGridDay'
       },
       events: '/calendar/events',
       height: 'auto',
-      contentHeight: 'auto',
-      aspectRatio: 1.35,
-      eventDisplay: 'block'
+      eventDisplay: 'block',
+      dayMaxEventRows: true,
+
+      // Add class to days that have events
+      dayCellClassNames: function(arg) {
+        const hasEvent = calendar.getEvents().some(e =>
+          e.startStr.slice(0, 10) === arg.date.toISOString().slice(0, 10)
+        );
+        return hasEvent ? ['fc-day-has-event'] : [];
+      },
+
+      // Handle clicking on a day
+      dateClick: function(info) {
+        const eventsOnDay = calendar.getEvents().filter(e =>
+          e.startStr.startsWith(info.dateStr)
+        );
+
+        if (eventsOnDay.length === 0) {
+          alert(`No appointments on ${info.dateStr}`);
+        } else {
+          const msg = eventsOnDay.map(e => `• ${e.title}`).join('\n');
+          alert(`Appointments on ${info.dateStr}:\n${msg}`);
+        }
+      }
     });
+
     calendar.render();
   });
 </script>
