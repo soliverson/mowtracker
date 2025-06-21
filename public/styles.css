@@ -178,6 +178,14 @@ input, button {
   width: 100%;
   max-width: 800px;
 }
+.login-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh; /* Full screen height */
+  width: 100%;
+  padding: 20px;
+}
 
 textarea {
   width: 100%;

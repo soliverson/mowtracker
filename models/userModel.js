@@ -1,164 +1,148 @@
-const db = require('./db');
+/**
+ * models/userModel.js
+ * ----------------------------------------------------
+ * All database‐level logic for users *plus* the legacy
+ * job / customer helpers you already rely on.
+ */
+const db     = require('./db');
 const bcrypt = require('bcryptjs');
 
-// Register a new user (with hashed password)
-async function register(name, email, password, callback) {
-  try {
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const result = await db.query(
-      'INSERT INTO users (name, email, password) VALUES ($1, $2, $3) RETURNING *',
-      [name, email, hashedPassword]
-    );
-    callback(null, result.rows[0]);
-  } catch (err) {
-    callback(err);
-  }
-}
+/* ------------------------------------------------------------------
+   USER AUTH / PROFILE
+-------------------------------------------------------------------*/
 
-// Update password for a user by ID
-async function updatePassword(userId, plainTextPassword, callback) {
-  try {
-    const hashedPassword = await bcrypt.hash(plainTextPassword, 10);
-    await db.query(
-      'UPDATE users SET password = $1 WHERE id = $2',
-      [hashedPassword, userId]
-    );
-    callback(null, true);
-  } catch (err) {
-    callback(err);
-  }
-}
-
-// Authenticate login (legacy plain-text method)
-function authenticate(email, password, callback) {
-  db.query(
-    'SELECT * FROM users WHERE email = $1 AND password = $2',
-    [email, password],
-    (err, result) => {
-      if (err) return callback(err);
-      callback(null, result.rows[0]);
-    }
+/**
+ * Create a user (password is hashed).
+ * returns 1 row with id, name, email …
+ */
+async function register (name, email, password) {
+  const hashed = await bcrypt.hash(password, 10);
+  return db.query(
+    'INSERT INTO users (name, email, password) VALUES ($1,$2,$3) RETURNING *',
+    [name, email, hashed]
   );
 }
 
-// Find user by email (used by login controller)
-async function findByEmail(email) {
+/** Update a user’s password (hashes internally) */
+async function updatePassword (userId, plain) {
+  const hashed = await bcrypt.hash(plain, 10);
+  await db.query(
+    'UPDATE users SET password = $1 WHERE id = $2',
+    [hashed, userId]
+  );
+}
+
+/** Look up a user by e-mail – returns pg Result */
+function findByEmail (email) {
   return db.query('SELECT * FROM users WHERE email = $1', [email]);
 }
 
-// Job and customer functions (unchanged)
-function getJobs(userId, callback) {
+/* ------------------------------------------------------------------
+   *Legacy* helpers you’re already using elsewhere
+-------------------------------------------------------------------*/
+function getJobs (userId, cb) {
   db.query(
     'SELECT * FROM jobs WHERE user_id = $1 ORDER BY date DESC',
     [userId],
-    (err, result) => {
-      if (err) return callback(err);
-      callback(null, result.rows);
-    }
+    (err, result) => cb(err, result?.rows)
   );
 }
 
-function addJob(user_id, customer_name, date, amount_paid, phone, notes, address, time, callback) {
+function addJob (user_id, customer_name, date, amount_paid,
+                 phone, notes, address, time, cb) {
   db.query(
-    `INSERT INTO jobs (user_id, customer_name, date, amount_paid, phone, notes, address, time)
-     VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
-    [user_id, customer_name, date, amount_paid, phone, notes, address, time],
-    callback
+    `INSERT INTO jobs (user_id, customer_name, date, amount_paid,
+                       phone, notes, address, time)
+     VALUES ($1,$2,$3,$4,$5,$6,$7,$8)`,
+    [user_id, customer_name, date, amount_paid,
+     phone, notes, address, time],
+    cb
   );
 }
 
-function getJobsByCustomer(userId, customerName, callback) {
+function getJobsByCustomer (userId, customerName, cb) {
   db.query(
     'SELECT * FROM jobs WHERE user_id = $1 AND customer_name = $2 ORDER BY date DESC',
     [userId, customerName],
-    (err, result) => {
-      if (err) return callback(err);
-      callback(null, result.rows);
-    }
+    (err, r) => cb(err, r?.rows)
   );
 }
 
-function deleteJob(userId, jobId, callback) {
+function deleteJob (userId, jobId, cb) {
   db.query(
     'DELETE FROM jobs WHERE user_id = $1 AND id = $2',
     [userId, jobId],
-    callback
+    cb
   );
 }
 
-function addCustomer(user_id, name, phone, address, callback) {
+/* ---------- Customers ---------- */
+function addCustomer   (user_id, name, phone, address, cb) {
   db.query(
-    `INSERT INTO customers (user_id, name, phone, address)
-     VALUES ($1, $2, $3, $4)`,
+    'INSERT INTO customers (user_id, name, phone, address) VALUES ($1,$2,$3,$4)',
     [user_id, name, phone, address],
-    callback
+    cb
   );
 }
 
-function getCustomers(userId, callback) {
+function getCustomers  (userId, cb) {
   db.query(
     'SELECT * FROM customers WHERE user_id = $1 ORDER BY name',
     [userId],
-    (err, result) => {
-      if (err) return callback(err);
-      callback(null, result.rows);
-    }
+    (err, r) => cb(err, r?.rows)
   );
 }
 
-function getCustomerById(userId, customerId, callback) {
+function getCustomerById (userId, customerId, cb) {
   db.query(
     'SELECT * FROM customers WHERE id = $1 AND user_id = $2',
     [customerId, userId],
-    (err, result) => {
-      if (err) return callback(err);
-      callback(null, result.rows[0]);
-    }
+    (err, r) => cb(err, r?.rows[0])
   );
 }
 
-function updateCustomer(userId, customerId, name, phone, address, callback) {
+function updateCustomer (userId, customerId, name, phone, address, cb) {
   db.query(
-    'UPDATE customers SET name = $1, phone = $2, address = $3 WHERE id = $4 AND user_id = $5',
+    'UPDATE customers SET name=$1, phone=$2, address=$3 WHERE id=$4 AND user_id=$5',
     [name, phone, address, customerId, userId],
-    callback
+    cb
   );
 }
 
-function deleteCustomer(userId, customerId, callback) {
+function deleteCustomer (userId, customerId, cb) {
   db.query(
-    'DELETE FROM customers WHERE id = $1 AND user_id = $2',
+    'DELETE FROM customers WHERE id=$1 AND user_id=$2',
     [customerId, userId],
-    callback
+    cb
   );
 }
 
-function getJobById(userId, jobId, callback) {
+/* ---------- Jobs CRUD helpers ---------- */
+function getJobById (userId, jobId, cb) {
   db.query(
-    'SELECT * FROM jobs WHERE id = $1 AND user_id = $2',
+    'SELECT * FROM jobs WHERE id=$1 AND user_id=$2',
     [jobId, userId],
-    (err, result) => {
-      if (err) return callback(err);
-      callback(null, result.rows[0]);
-    }
+    (err, r) => cb(err, r?.rows[0])
   );
 }
 
-function updateJob(userId, jobId, customer_name, date, amount_paid, phone, notes, address, time, callback) {
+function updateJob (userId, jobId, customer_name, date,
+                    amount_paid, phone, notes, address, time, cb) {
   db.query(
-    `UPDATE jobs SET customer_name = $1, date = $2, amount_paid = $3,
-     phone = $4, notes = $5, address = $6, time = $7
-     WHERE id = $8 AND user_id = $9`,
+    `UPDATE jobs SET customer_name=$1, date=$2, amount_paid=$3, phone=$4,
+                     notes=$5, address=$6, time=$7
+     WHERE id=$8 AND user_id=$9`,
     [customer_name, date, amount_paid, phone, notes, address, time, jobId, userId],
-    callback
+    cb
   );
 }
 
 module.exports = {
+  /* auth */
   register,
   updatePassword,
-  authenticate,
   findByEmail,
+  /* legacy helpers */
   getJobs,
   addJob,
   getJobsByCustomer,
