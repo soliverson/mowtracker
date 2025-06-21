@@ -25,6 +25,8 @@ app.use(expressLayouts);
 app.set('layout', 'layout'); // views/layout.ejs
 
 // ✅ Correct session config — using pgSession
+app.set('trust proxy', 1);
+
 app.use(session({
   store: new pgSession({
     pool: db,
